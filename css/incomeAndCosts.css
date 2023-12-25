@@ -1,0 +1,13 @@
+/* кнопки */
+
+.btn-create {
+    font-size: 14px;
+    width: 130px;
+    height: 38px;
+}
+.modal-footer .btn {
+    font-size: 14px;
+}
+.modal-footer .btn-success {
+    width: 103px;
+}

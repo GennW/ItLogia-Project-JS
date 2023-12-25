@@ -1,0 +1,160 @@
+.card {
+    width: 352px;
+    height: 121px;
+}
+
+.card-title {
+    font-size: 1.75rem;
+}
+
+.btn {
+    --bs-btn-font-size: 0.875rem;
+}
+
+.card:last-child .card-body {
+    font-size: 28px;
+    line-height: 33px;
+    color: #CED4DA;
+}
+
+/* Поворот иконки в аккордеоне */
+
+.accordion-button::after {
+    transform: rotate(270deg);
+
+}
+
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(360deg);
+}
+
+
+.accordion {
+    --bs-accordion-bg: none;
+
+}
+
+.accordion-button:not(.collapsed) {
+    border-radius: 50%;
+    color: #ffffff;
+    background-color: #0e6ffd;
+    box-shadow: inset 0 calc(-1 * var(--bs-accordion-border-width)) 0 #0d6efd;
+}
+.accordion-button {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.accordion-flush .accordion-item .accordion-button {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
+
+.list-group-item {
+    border-color: #0d6efd;
+}
+.list-group-item:first-child  {
+    border-left: 1px solid #0e6ffd;
+    border-right: 1px solid #0e6ffd;
+    border-radius: 0;
+}
+/* .accordion {
+    --bs-accordion-active-color: white;
+} */
+.accordion {
+    
+    --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+
+    --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+
+}
+
+.layout {}
+
+.sidebar-wrapper {}
+
+.d-flex {}
+
+.flex-nowrap {}
+
+.vh-100 {}
+
+.flex-column {}
+
+.flex-shrink-0 {}
+
+.p-3 {}
+
+.bg-light {}
+
+.sidebar {}
+
+.mt-4 {}
+
+.mx-5 {}
+
+.logo {}
+
+.mb-5 {}
+
+.nav {}
+
+.nav-pills {}
+
+.mt-5 {}
+
+.mb-auto {}
+
+.nav-item {}
+
+.nav-link {}
+
+.active {}
+
+.me-2 {}
+
+.link-dark {}
+
+.justify-content-between {}
+
+.align-items-center {}
+
+.text-start {}
+
+.px-0 {}
+
+.bi {}
+
+.pe-none {}
+
+.dropdown {}
+
+.text-decoration-none {}
+
+.me-3 {}
+
+.main {}
+
+.container {}
+
+.my-5 {}
+
+.main-title {}
+
+.main-items {}
+
+.row {}
+
+.col-12 {}
+
+.col-md-6 {}
+
+.col-lg-4 {}
+
+.main-item {}
+
+.title {}
+
+.main-btn-wrapper {}
+
+.btn {}

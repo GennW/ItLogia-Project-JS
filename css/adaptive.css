@@ -1,0 +1,41 @@
+  /* Медиазапрос для адаптивности */
+
+  @media (max-width: 1024px) {
+    .burger {
+      display: none;
+    }
+
+
+    /* .opacity-50 {
+      opacity: 0 !important;
+    } */
+  }
+
+  @media (max-width: 768px) {
+
+    .divider {
+      display: none;
+    }
+    canvas {
+      margin-bottom: 50px;
+    }
+    /* .container {
+      max-width: 1100px;
+    } */
+  }
+
+  @media (max-width: 690px) {
+
+    .mt-3.mb-2.text-start {
+      text-align: center !important;
+    }
+
+    .mt-3.mb-2.text-start a {
+      display: block;
+      font-size: 12px;
+    }
+
+    .form-control::placeholder {
+      font-size: 6px;
+    }
+  }
