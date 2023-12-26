@@ -25,6 +25,13 @@ body {
     width: 98px;
     height: 40px;
 }
+.btn:disabled {
+    background-color: #6e6c70;
+    border-color: #6e6c70;
+    pointer-events: auto;
+    cursor: not-allowed;
+}
+
 
 .sidebar {
     width: 220px;
