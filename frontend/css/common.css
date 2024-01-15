@@ -15,6 +15,15 @@ body {
     width: 1100px;
     padding: 0 15px 0 60px;
 }
+.burger {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+  .btn-close {
+    display: none;
+  }
 
 .layout {
     display: flex;
@@ -86,4 +95,12 @@ body {
     --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
 
-
+/* сброс ширины сайдбара на адаптиве */
+.offcanvas,
+.offcanvas-lg,
+.offcanvas-md,
+.offcanvas-sm,
+.offcanvas-xl,
+.offcanvas-xxl {
+  --bs-offcanvas-width: unset;
+}

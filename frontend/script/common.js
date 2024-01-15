@@ -1,11 +1,32 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+   
+    // бургер меню
+    const burgerIcon = document.querySelector('.burger-icon');
+    const sidebar = document.querySelector('.sidebar');
+    console.log(sidebar)
+
+    // Вызов функции toggleSidebar() при загрузке страницы
+    toggleSidebar();
+
+    if (burgerIcon) {
+        burgerIcon.addEventListener('click', function () {
+            sidebar.classList.toggle('active'); // Переключает класс "active" для открытия/закрытия сайдбара
+        });
+
+        // Добавляем обработчик события для закрытия сайдбара при клике в любом месте страницы
+        document.addEventListener('click', function (event) {
+            if (!sidebar.contains(event.target) && event.target !== burgerIcon) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
 
     // сайдбар при изменении экрана
     function toggleSidebar() {
-        var width = window.innerWidth;
-        var burger = document.querySelector('.burger');
-        var btnClose = document.querySelector('.btn-close');
-        var sidebar = document.querySelector('.sidebar-wrapper');
+        let width = window.innerWidth;
+        let burger = document.querySelector('.burger');
+        let btnClose = document.querySelector('.btn-close');
+        let sidebar = document.querySelector('.sidebar-wrapper');
 
         if (width >= 1024) {
             sidebar.style.display = 'block';
@@ -26,7 +47,7 @@
             // Добавляем класс "offcanvas" и "offcanvas-start"
             sidebar.classList.add('offcanvas', 'offcanvas-start');
 
-            // Добавляем остальные указанные атрибуты
+            // Добавляем остальные атрибуты
             sidebar.setAttribute('data-bs-backdrop', 'static');
             sidebar.setAttribute('tabindex', '-1');
             sidebar.setAttribute('id', 'staticBackdrop');
@@ -36,6 +57,9 @@
     // Вызов функции при загрузке страницы
 
     window.addEventListener('resize', toggleSidebar);
+
+
+    // проверка url код см.  Проект: Quiz часть 2 43:15
 
 });
 

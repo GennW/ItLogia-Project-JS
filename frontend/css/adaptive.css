@@ -5,6 +5,9 @@
       display: none;
     }
 
+    .main {
+      margin: 0 auto;
+    }
 
     /* .opacity-50 {
       opacity: 0 !important;
@@ -16,9 +19,11 @@
     .divider {
       display: none;
     }
+
     canvas {
       margin-bottom: 50px;
     }
+
     /* .container {
       max-width: 1100px;
     } */

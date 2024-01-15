@@ -7,25 +7,7 @@
   margin-right: 20px;
 }
 
-.burger {
-  display: none;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
 
-.btn-close {
-  display: none;
-}
-
-.offcanvas,
-.offcanvas-lg,
-.offcanvas-md,
-.offcanvas-sm,
-.offcanvas-xl,
-.offcanvas-xxl {
-  --bs-offcanvas-width: unset;
-}
 
 .btn-outline-dark {
   --bs-btn-color: #6C757D;
