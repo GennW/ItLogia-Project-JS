@@ -4,7 +4,7 @@
   "description": "stage2",
   "main": "index.js",
   "scripts": {
-    "start": "http-server"
+    "start": "http-server -o"
   },
   "keywords": [],
   "author": "",

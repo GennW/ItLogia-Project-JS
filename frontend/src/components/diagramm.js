@@ -1,64 +1,78 @@
 ﻿export class Diagram {
-    constructor(canvasId, data, titleText) {
+    // Конструктор класса, принимает идентификатор  и текст заголовка
+    constructor(canvasId, titleText) {
+        // Получаем контекст рисования 
         this.canvas = document.getElementById(canvasId).getContext('2d');
-        this.data = data;
-        this.titleText = titleText;
+        this.titleText = titleText; // Устанавливаем текст заголовка
     }
-
-    createChart() {
+ 
+    // Статический метод для создания данных для первой диаграммы
+    static createDataCanvas1() {
+        return {
+            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'], // Метки секторов диаграммы
+            datasets: [{
+                data: [30, 40, 20, 15, 10], // Данные для каждого сектора
+                backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'], // Цвета секторов
+                hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'] // Цвета при наведении
+            }]
+        };
+    }
+ 
+    // Статический метод для создания данных для второй диаграммы
+    static createDataCanvas2() {
+        return {
+            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'], // Метки секторов диаграммы
+            datasets: [{
+                data: [5, 20, 40, 40, 30], // Данные для каждого сектора
+                backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'], // Цвета секторов
+                hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'] // Цвета при наведении
+            }]
+        };
+    }
+ 
+    // Метод для создания диаграммы с переданными данными
+    createChart(data) {
         return new Chart(this.canvas, {
-            type: 'pie',
-            data: this.data,
+            type: 'pie', // Тип диаграммы - круговая
+            data: data, // Используемые данные
             options: {
-                aspectRatio: 1,
-                cutout: 0,
+                aspectRatio: 1, // Соотношение сторон
+                cutout: 0, // Размер отсечения по центру
                 layout: {
-                    padding: { top: 0 }
+                    padding: { top: 0 } // Отступ сверху
                 },
                 plugins: {
                     title: {
-                        display: true,
-                        padding: 10,
-                        text: this.titleText,
-                        font: { family: 'Roboto', size: 28 }
+                        display: true, // Показывать заголовок
+                        padding: 10, // Отступ заголовка
+                        text: this.titleText, // Сам текст заголовка
+                        font: { family: 'Roboto', size: 28 } // Шрифт заголовка
                     },
                     legend: {
-                        position: 'top',
-                        align: 'center',
+                        position: 'top', // Положение легенды
+                        align: 'center', // Выравнивание легенды
                         labels: {
-                            padding: 15,
-                            boxWidth: 35,
-                            boxHeight: 10,
-                            font: { family: 'Roboto', size: 12 }
+                            padding: 15, // Отступ меток
+                            boxWidth: 35, // Ширина маркера
+                            boxHeight: 10, // Высота маркера
+                            font: { family: 'Roboto', size: 12 } // Шрифт меток
                         }
                     }
                 }
             }
         });
     }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    if (window.location.pathname === '/index.html') {
-        const dataCanvas1 = {
-            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-            datasets: [{
-                data: [30, 40, 20, 15, 10],
-                backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'],
-                hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD']
-            }]
-        };
-
-        const dataCanvas2 = {
-            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-            datasets: [{
-                data: [5, 20, 40, 40, 30],
-                backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'],
-                hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD']
-            }]
-        };
-
-        const diagrammIncome = new Diagram('myPieChart1', dataCanvas1, 'Доходы').createChart();
-        const diagrammExpenses = new Diagram('myPieChart2', dataCanvas2, 'Расходы').createChart();
+ 
+    // Метод для создания диаграммы с данными из createDataCanvas1
+    createChartWithCanvas1() {
+        const dataCanvas1 = Diagram.createDataCanvas1(); // Создание данных для первой диаграммы
+        return this.createChart(dataCanvas1); // Создание и отображение диаграммы
     }
-});
+ 
+    // Метод для создания диаграммы с данными из createDataCanvas2
+    createChartWithCanvas2() {
+        const dataCanvas2 = Diagram.createDataCanvas2(); // Создание данных для второй диаграммы
+        return this.createChart(dataCanvas2); // Создание и отображение диаграммы
+    }
+ }
+ 

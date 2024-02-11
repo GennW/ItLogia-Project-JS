@@ -1,12 +1,16 @@
+
 export class Form {
 
-    constructor() {
+    constructor(page) {
+
         this.rememberMeElement = null;
         this.processElement = null;
+        this.page = page;
+
         this.fields = [
             {
                 email: 'email',
-                id: 'floatingInput',
+                id: 'email',
                 element: null,
                 regex: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
                 valid: false,
@@ -20,9 +24,32 @@ export class Form {
             },
         ];
 
+       if (this.page === 'signup') {
+    this.fields.unshift(
+        {
+            name: 'fullName',
+            id: 'full-name',
+            element: null,
+            //только кириллические символы в имени, фамилии и отчестве, а также допускает использование дефисов для двойных фамилий.
+            regex: /^[\u0410-\u044F]+([\s-][\u0410-\u044F]+)*$/i,
+            valid: false,
+        }
+    );
+    this.fields.push(
+        {
+            name: 'confirmPassword',
+            id: 'confirm-password',
+            element: null,
+            regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+            valid: false,
+        }
+    );
+}
+
+
         const that = this;
         this.fields.forEach(item => {
-            
+
             item.element = document.getElementById(item.id);
 
             if (item.element) {
@@ -38,11 +65,13 @@ export class Form {
         this.processElement.onclick = function () {
             that.processForm();
         }
-
-        this.rememberMeElement = document.getElementById('flexCheckDefault');
-        this.rememberMeElement.onchange = function () {
-            that.validateForm();
+        if (this.page === 'signup') {
+            this.rememberMeElement = document.getElementById('flexCheckDefault');
+            this.rememberMeElement.onchange = function () {
+                that.validateForm();
+            }
         }
+
     }
 
 
@@ -73,7 +102,9 @@ export class Form {
 
     validateForm() {
         const validForm = this.fields.every(item => item.valid);
-        const isValid = this.rememberMeElement.checked && validForm
+        
+        // rememberMeElement работает не верно
+        const isValid = this.rememberMeElement ? this.rememberMeElement.checked && validForm : validForm;
         if (isValid) {
             this.processElement.removeAttribute('disabled')
         } else {

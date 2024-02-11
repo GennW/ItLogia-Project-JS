@@ -1,5 +1,14 @@
 import { Form } from "./components/form.js";
 import { Diagram } from "./components/diagramm.js";
+import { Costs } from "./components/costs.JS";
+import { Income } from "./components/income.JS";
+import { CostsCreate } from "./components/costsCreate.JS";
+import { CostsEdit } from "./components/costsEdit.JS";
+import { IncomeAndCosts } from "./components/incomeAndCosts.JS";
+import { IncomeCostsCreate } from "./components/incomeCostsCreate.JS";
+import { IncomeCostsEdit } from "./components/incomeCostsEdit.JS";
+import { IncomeCreate } from "./components/incomeCreate.JS";
+import { IncomeEdit } from "./components/incomeEdit.JS";
 
 export class Router {
     constructor() {
@@ -10,24 +19,27 @@ export class Router {
                 template: 'templates/index.html',
                 styles: 'css/index.css',
                 load: () => { // для скриптов под каждую страницу
-                    new Diagram();
+                    const diagram1 = new Diagram('myPieChart1', 'Доходы');
+                    diagram1.createChartWithCanvas1(); // Создает диаграмму с dataCanvas1
+
+                    const diagram2 = new Diagram('myPieChart2', 'Расходы');
+                    diagram2.createChartWithCanvas2(); // Создает диаграмму с dataCanvas2
                 }
             },
             {
                 route: '#/signup',
                 title: 'Регистрация',
                 template: 'templates/signup.html',
-                // styles: 'css/index.css',
+                styles: '',
                 load: () => {
                     new Form();
-
                 }
             },
             {
                 route: '#/signin',
                 title: 'Авторизация',
                 template: 'templates/signin.html',
-                // styles: 'css/index.css',
+                styles: '',
                 load: () => {
                     new Form();
                 }
@@ -36,8 +48,9 @@ export class Router {
                 route: '#/costs',
                 title: 'Расходы',
                 template: 'templates/costs.html',
-                // styles: 'css/index.css',
+                styles: '',
                 load: () => {
+                    new Costs();
                 }
             },
             {
@@ -46,6 +59,7 @@ export class Router {
                 template: 'templates/costsCreate.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new CostsCreate();
                 }
             },
             {
@@ -54,6 +68,7 @@ export class Router {
                 template: 'templates/costsEdit.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new CostsEdit();
                 }
             },
             {
@@ -62,6 +77,7 @@ export class Router {
                 template: 'templates/income.html',
                 styles: 'css/income.css',
                 load: () => {
+                    new Income();
                 }
             },
             {
@@ -70,6 +86,7 @@ export class Router {
                 template: 'templates/incomeAndCosts.html',
                 styles: 'css/incomeAndCosts.css',
                 load: () => {
+                    new IncomeAndCosts();
                 }
             },
             {
@@ -78,6 +95,7 @@ export class Router {
                 template: 'templates/incomeCostsCreate.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new IncomeCostsCreate();
                 }
             },
             {
@@ -86,6 +104,7 @@ export class Router {
                 template: 'templates/incomeCostsEdit.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new IncomeCostsEdit();
                 }
             },
             {
@@ -94,6 +113,7 @@ export class Router {
                 template: 'templates/incomeCreate.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new IncomeCreate();
                 }
             },
             {
@@ -102,6 +122,7 @@ export class Router {
                 template: 'templates/incomeEdit.html',
                 // styles: 'css/index.css',
                 load: () => {
+                    new IncomeEdit();
                 }
             },
 
@@ -110,7 +131,7 @@ export class Router {
 
     async openRoute() {
         const newRoute = this.routes.find(item => {
-            return item.route === window.location.hash;
+            return item.route === window.location.hash.split('?')[0];
         });
 
         if (!newRoute) {
@@ -118,22 +139,36 @@ export class Router {
             return;
         }
 
+        //24min
         document.getElementById('content').innerHTML =
-            await fetch(newRoute.template).then(response => response.text());
-        document.getElementById('styles').setAttribute('href', newRoute.styles);
-        document.getElementById('title').innerText = newRoute.title;
-        
-        newRoute.load();
-        //почему при первом переходе на #/income или на #/costs подключается стиль index.css? 
-        //но если перезагрузить эту страницу то стиль index.css не подключается, то есть работает нормально
+            await fetch(newRoute.template)
+                .then(response => response.text());
 
+        if (newRoute.styles && newRoute.styles.length > 0) {
+            document.getElementById('styles').setAttribute('href', newRoute.styles);
+        }
+
+        document.getElementById('title').innerText = newRoute.title;
+
+        newRoute.load();
+
+
+        //подключение стиля index.css перед incomeAndCosts.css
         if (window.location.hash === '#/incomeAndCosts') {  // Проверяем, страницу
             const additionalStyle = document.createElement('link');  // Создаем новый элемент link
             additionalStyle.setAttribute('rel', 'stylesheet');  // Устанавливаем атрибут rel в значении "stylesheet"
             additionalStyle.setAttribute('href', 'css/index.css');  // Устанавливаем атрибут href с ссылкой на css/index.css
             const existingStyles = document.getElementById('styles');  // Получаем элемент стилей, который уже существует
             document.head.insertBefore(additionalStyle, existingStyles);  // Вставляем index.css перед существующими стилями
-        }        
-        
+        }
+
+        // удаление index.css там где он не нужен
+        if (window.location.hash !== '#/incomeAndCosts' && window.location.hash !== '#/') {
+            let existingIndexStyles = document.querySelector('link[href="css/index.css"]');
+            if (existingIndexStyles) {
+                document.head.removeChild(existingIndexStyles);
+            }
+        }
+
     }
 }
