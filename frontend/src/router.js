@@ -32,7 +32,7 @@ export class Router {
                 template: 'templates/signup.html',
                 styles: '',
                 load: () => {
-                    new Form();
+                    new Form('signup');
                 }
             },
             {
@@ -41,7 +41,7 @@ export class Router {
                 template: 'templates/signin.html',
                 styles: '',
                 load: () => {
-                    new Form();
+                    new Form('signin');
                 }
             },
             {
