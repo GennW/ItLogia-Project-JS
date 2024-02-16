@@ -22,8 +22,8 @@ export class UrlManager {
 
     static checkUserData(params) {
         if (!params.name || !params.lastName || !params.email) {
-            // location.href = '#/signin';
-            console.log('Сработала проверка на переход по страницам без регистрации')
+            location.href = '#/signin';
+            // console.log('Сработала проверка на переход по страницам без регистрации')
         }
     }
 }

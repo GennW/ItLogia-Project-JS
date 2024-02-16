@@ -100,26 +100,57 @@ export class Form {
 
     }
 
+    // validateForm() {
+    //     const validForm = this.fields.every(item => item.valid);
+
+    //     // Проверка на существование полей "inputPassword" и "confirm-password"
+    //     const passwordField = this.fields.find(item => item.id === 'inputPassword');
+    //     const confirmPasswordField = this.fields.find(item => item.id === 'confirm-password');
+
+    //     // Получение значений пароля и подтверждения пароля
+    //     const passwordValue = passwordField ? passwordField.element.value : '';
+    //     const confirmPasswordValue = confirmPasswordField ? confirmPasswordField.element.value : '';
+
+    //     // rememberMeElement работает не верно
+    //     const isValid = this.rememberMeElement ? this.rememberMeElement.checked && validForm : validForm;
+    //     if (isValid && passwordValue === confirmPasswordValue) {
+    //         this.processElement.removeAttribute('disabled');
+    //     } else {
+    //         this.processElement.setAttribute('disabled', 'disabled');
+    //     }
+    //     return isValid;
+    // }
+
     validateForm() {
+        // Проверка всех полей на валидность
         const validForm = this.fields.every(item => item.valid);
-
-        // Проверка на существование полей "inputPassword" и "confirm-password"
+      
+        // Поиск поля "inputPassword"
         const passwordField = this.fields.find(item => item.id === 'inputPassword');
+        // Поиск поля "confirm-password"
         const confirmPasswordField = this.fields.find(item => item.id === 'confirm-password');
-
+      
         // Получение значений пароля и подтверждения пароля
         const passwordValue = passwordField ? passwordField.element.value : '';
         const confirmPasswordValue = confirmPasswordField ? confirmPasswordField.element.value : '';
-
-        // rememberMeElement работает не верно
-        const isValid = this.rememberMeElement ? this.rememberMeElement.checked && validForm : validForm;
-        if (isValid && passwordValue === confirmPasswordValue) {
-            this.processElement.removeAttribute('disabled');
+      
+        // Проверка rememberMeElement, если он существует
+        const isRemembered = !this.rememberMeElement || this.rememberMeElement.checked;
+      
+        // Проверка валидности формы, совпадения паролей и rememberMeElement
+        const isValid = validForm && (!confirmPasswordField || passwordValue === confirmPasswordValue);
+      
+        // Если все условия верны, активировать кнопку
+        if (isValid) {
+          this.processElement.removeAttribute('disabled');
         } else {
-            this.processElement.setAttribute('disabled', 'disabled');
+          this.processElement.setAttribute('disabled', 'disabled');
         }
-        return isValid;
-    }
+      
+        return isValid; // Возвращаем результат валидации формы
+      }
+      
+
 
     async processForm() {
         if (this.validateForm()) {
@@ -151,15 +182,15 @@ export class Form {
                             email: this.fields.find(item => item.email === 'email').element.value,
                         }),
                     });
-                    console.log(response)
-
-                    // проверяем статус сервера
-                    if (response.status < 200 || response.status >= 300) { // 43 и 48 min Проект Quiz: часть 4
-                        throw new Error(response.message);
-                    }
 
                     // Обработка результата запроса
                     const result = await response.json();
+                    // проверяем статус сервера
+                    if (response.status < 200 || response.status >= 300) { // 43 и 48 min Проект Quiz: часть 4
+                        alert(result.message);
+                        throw new Error(response.message); 
+                    }
+
                     console.log(result)
                     if (result) {
                         if (!result.user) {
@@ -176,24 +207,50 @@ export class Form {
             } else {
 
             }
+            //////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////
+            if (this.page === 'signin') {
+
+                try {
+
+                    // Отправка запроса на сервер для регистрации
+                    const response = await fetch('http://localhost:3000/api/login', {
+                        method: "POST",
+                        headers: {
+                            'Content-type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            password: this.fields.find(item => item.password === 'password').element.value,
+                            rememberMe: this.rememberMeElement.checked, // Получение состояния rememberMeElement
+                            email: this.fields.find(item => item.email === 'email').element.value,
+                        }),
+                    });
+
+                    // Обработка результата запроса
+                    const result = await response.json();
+                    // проверяем статус сервера
+                    if (response.status < 200 || response.status >= 300) { // 43 и 48 min Проект Quiz: часть 4
+                        alert(result.message);
+                        throw new Error(response.message); 
+                    }
+
+                    console.log(result)
+                    if (result) {
+                        if (!result.user) {
+                            throw new Error(result.message);
+                        }
+                        // Перенаправление на главную страницу в случае успеха
+                        location.href = '#/'
+                    }
+
+                } catch (error) {
+                    console.log(error);
+                }
+
+            } 
+
         }
     }
 }
 
-
-
-/*
-const fullName = this.fields.find(item => item.name === 'fullName').element.value;
-                    // Разбиение строки fullName на фамилию и имя
-                    const fullNameParts = fullName.split(" ");
-                    const lastName = fullNameParts[0]; // Фамилия (первая часть строки)
-                    const name = fullNameParts.slice(1).join(" "); // Имя (все, кроме первой части)
-
-body: JSON.stringify({
-                            name: name, // использование разделенного имени
-                            lastName: lastName, // использование разделенной фамилии
-                            password: this.fields.find(item => item.name === 'confirmPassword').element.value,
-                            email: this.fields.find(item => item.name === 'email').element.value,
-                        })
-
-                    */
