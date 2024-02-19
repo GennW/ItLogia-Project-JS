@@ -1,3 +1,6 @@
+import config from "../../config/config.js";
+import { Auth } from "./services/auth.js";
+import { CustomHttp } from "./services/custom-http.js";
 
 export class Form {
 
@@ -19,7 +22,8 @@ export class Form {
                 password: 'password',
                 id: 'inputPassword',
                 element: null,
-                regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+                // regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+                regex: /^(?=.*\d)(?=.*[A-Z]).{10,}$/,
                 valid: false,
             },
         ];
@@ -40,7 +44,7 @@ export class Form {
                     name: 'confirmPassword',
                     id: 'confirm-password',
                     element: null,
-                    regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+                    regex: /^(?=.*\d)(?=.*[A-Z]).{10,}$/,
                     valid: false,
                 }
             );
@@ -124,32 +128,32 @@ export class Form {
     validateForm() {
         // Проверка всех полей на валидность
         const validForm = this.fields.every(item => item.valid);
-      
+
         // Поиск поля "inputPassword"
         const passwordField = this.fields.find(item => item.id === 'inputPassword');
         // Поиск поля "confirm-password"
         const confirmPasswordField = this.fields.find(item => item.id === 'confirm-password');
-      
+
         // Получение значений пароля и подтверждения пароля
         const passwordValue = passwordField ? passwordField.element.value : '';
         const confirmPasswordValue = confirmPasswordField ? confirmPasswordField.element.value : '';
-      
+
         // Проверка rememberMeElement, если он существует
         const isRemembered = !this.rememberMeElement || this.rememberMeElement.checked;
-      
+
         // Проверка валидности формы, совпадения паролей и rememberMeElement
         const isValid = validForm && (!confirmPasswordField || passwordValue === confirmPasswordValue);
-      
+
         // Если все условия верны, активировать кнопку
         if (isValid) {
-          this.processElement.removeAttribute('disabled');
+            this.processElement.removeAttribute('disabled');
         } else {
-          this.processElement.setAttribute('disabled', 'disabled');
+            this.processElement.setAttribute('disabled', 'disabled');
         }
-      
+
         return isValid; // Возвращаем результат валидации формы
-      }
-      
+    }
+
 
 
     async processForm() {
@@ -167,35 +171,19 @@ export class Form {
                     const lastName = fullNameParts[0];
                     const name = fullNameParts.slice(1).join(" ");
 
-                    // Отправка запроса на сервер для регистрации
-                    const response = await fetch('http://localhost:3000/api/signup', {
-                        method: "POST",
-                        headers: {
-                            'Content-type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name: name, // использование разделенного имени
-                            lastName: lastName, // использование разделенной фамилии
-                            password: this.fields.find(item => item.password === 'password').element.value,
-                            passwordRepeat: this.fields.find(item => item.name === 'confirmPassword').element.value,
-                            email: this.fields.find(item => item.email === 'email').element.value,
-                        }),
+                    const result = await CustomHttp.request(config.host + '/signup', 'POST', {
+                        name: name, // использование разделенного имени
+                        lastName: lastName, // использование разделенной фамилии
+                        password: this.fields.find(item => item.password === 'password').element.value,
+                        passwordRepeat: this.fields.find(item => item.name === 'confirmPassword').element.value,
+                        email: this.fields.find(item => item.email === 'email').element.value,
                     });
 
-                    // Обработка результата запроса
-                    const result = await response.json();
-                    // проверяем статус сервера
-                    if (response.status < 200 || response.status >= 300) { // 43 и 48 min Проект Quiz: часть 4
-                        alert(result.message);
-                        throw new Error(response.message); 
-                    }
-
-                    console.log(result)
                     if (result) {
                         if (!result.user) {
                             throw new Error(result.message);
                         }
+
                         // Перенаправление на главную страницу в случае успеха
                         location.href = '#/'
                     }
@@ -206,51 +194,73 @@ export class Form {
 
             } else {
 
-            }
-            //////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////
-            if (this.page === 'signin') {
+                if (this.page === 'signin') {
 
-                try {
+                    try {
 
-                    // Отправка запроса на сервер для регистрации
-                    const response = await fetch('http://localhost:3000/api/login', {
-                        method: "POST",
-                        headers: {
-                            'Content-type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
+                        // Отправка запроса на сервер для регистрации
+                        const result = await CustomHttp.request(config.host + '/login', 'POST', {
                             password: this.fields.find(item => item.password === 'password').element.value,
                             rememberMe: this.rememberMeElement.checked, // Получение состояния rememberMeElement
                             email: this.fields.find(item => item.email === 'email').element.value,
-                        }),
-                    });
+                        });
 
-                    // Обработка результата запроса
-                    const result = await response.json();
-                    // проверяем статус сервера
-                    if (response.status < 200 || response.status >= 300) { // 43 и 48 min Проект Quiz: часть 4
-                        alert(result.message);
-                        throw new Error(response.message); 
-                    }
+                        if (result) {
+                            // console.log('result =', result.tokens.accessToken)
+                            // Проверка наличия токенов и пользователя
+                            if (!result.user || !result.tokens || !result.tokens.accessToken || !result.tokens.refreshToken) {
+                                throw new Error("Токены не были получены");
+                            }
 
-                    console.log(result)
-                    if (result) {
-                        if (!result.user) {
-                            throw new Error(result.message);
+                            //сохраняем токены через класс Auth 1:02 Проект Quiz: часть 4
+                            Auth.setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+
+                            // Перенаправление на главную страницу в случае успеха
+                            location.href = '#/'
                         }
-                        // Перенаправление на главную страницу в случае успеха
-                        location.href = '#/'
+
+                    } catch (error) {
+                        console.log(error);
                     }
 
-                } catch (error) {
-                    console.log(error);
                 }
 
-            } 
+            }
+            //////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////
 
         }
     }
 }
 
+// переписаный
+// if (this.page === 'signin') {
+
+//     try {
+
+//         // Отправка запроса на сервер для регистрации
+//         const result = await CustomHttp.request('http://localhost:3000/api/login', 'POST', {
+//             password: this.fields.find(item => item.password === 'password').element.value,
+//             rememberMe: this.rememberMeElement.checked, // Получение состояния rememberMeElement
+//             email: this.fields.find(item => item.email === 'email').element.value,
+//         });
+
+//         if (result) {
+//             console.log(result)
+//             // Проверка наличия токенов и пользователя
+//             if (!result.user || !result.tokens || !result.tokens.accessToken || !result.tokens.refreshToken) {
+//                 throw new Error("Токены не были получены");
+//             }
+
+//             //сохраняем токены через класс Auth 1:02 Проект Quiz: часть 4
+//             Auth.setTokens(result.tokens.accessToken, tokens.refreshToken);
+
+//             // Перенаправление на главную страницу в случае успеха
+//             location.href = '#/'
+//         }
+
+//     } catch (error) {
+//         console.log(error);
+//     }
+
+// }

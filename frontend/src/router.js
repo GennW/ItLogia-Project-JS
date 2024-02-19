@@ -19,6 +19,7 @@ export class Router {
                 template: 'templates/index.html',
                 styles: 'css/index.css',
                 load: () => { // для скриптов под каждую страницу
+                    
                     const diagram1 = new Diagram('myPieChart1', 'Доходы');
                     diagram1.createChartWithCanvas1(); // Создает диаграмму с dataCanvas1
 

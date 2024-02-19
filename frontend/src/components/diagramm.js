@@ -1,10 +1,37 @@
-﻿export class Diagram {
+﻿import config from "../../config/config.js";
+import { UrlManager } from "../utils/url-manager.js";
+import { CustomHttp } from "./services/custom-http.js";
+config
+CustomHttp
+
+export class Diagram {
     // Конструктор класса, принимает идентификатор  и текст заголовка
     constructor(canvasId, titleText) {
+        
         // Получаем контекст рисования 
         this.canvas = document.getElementById(canvasId).getContext('2d');
         this.titleText = titleText; // Устанавливаем текст заголовка
+
+        // this.init();
     }
+
+    // async init() {
+    //     try {
+                    
+    //         const result = await CustomHttp.request(config.host + '');
+
+    //         if (result) {
+    //             if (!result.user) {
+    //                 throw new Error(result.message);
+    //             }
+    //             // что то делаем 57 минута Проект Quiz: часть 4
+            
+    //         }
+
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
  
     // Статический метод для создания данных для первой диаграммы
     static createDataCanvas1() {
