@@ -159,6 +159,9 @@ export class Form {
     async processForm() {
         if (this.validateForm()) {
 
+            const email = this.fields.find(item => item.email === 'email').element.value;
+            const password = this.fields.find(item => item.password === 'password').element.value;
+
             if (this.page === 'signup') {
 
                 try {
@@ -174,58 +177,55 @@ export class Form {
                     const result = await CustomHttp.request(config.host + '/signup', 'POST', {
                         name: name, // использование разделенного имени
                         lastName: lastName, // использование разделенной фамилии
-                        password: this.fields.find(item => item.password === 'password').element.value,
+                        password: password,
                         passwordRepeat: this.fields.find(item => item.name === 'confirmPassword').element.value,
-                        email: this.fields.find(item => item.email === 'email').element.value,
+                        email: email,
                     });
 
                     if (result) {
                         if (!result.user) {
                             throw new Error(result.message);
                         }
-
-                        // Перенаправление на главную страницу в случае успеха
-                        location.href = '#/'
                     }
 
                 } catch (error) {
-                    console.log(error);
-                }
-
-            } else {
-
-                if (this.page === 'signin') {
-
-                    try {
-
-                        // Отправка запроса на сервер для регистрации
-                        const result = await CustomHttp.request(config.host + '/login', 'POST', {
-                            password: this.fields.find(item => item.password === 'password').element.value,
-                            rememberMe: this.rememberMeElement.checked, // Получение состояния rememberMeElement
-                            email: this.fields.find(item => item.email === 'email').element.value,
-                        });
-
-                        if (result) {
-                            // console.log('result =', result.tokens.accessToken)
-                            // Проверка наличия токенов и пользователя
-                            if (!result.user || !result.tokens || !result.tokens.accessToken || !result.tokens.refreshToken) {
-                                throw new Error("Токены не были получены");
-                            }
-
-                            //сохраняем токены через класс Auth 1:02 Проект Quiz: часть 4
-                            Auth.setTokens(result.tokens.accessToken, result.tokens.refreshToken);
-
-                            // Перенаправление на главную страницу в случае успеха
-                            location.href = '#/'
-                        }
-
-                    } catch (error) {
-                        console.log(error);
-                    }
-
+                    return console.log(error);
                 }
 
             }
+
+            try {
+
+                // Отправка запроса на сервер для регистрации
+                const rememberMeElement = this.rememberMeElement;
+                const rememberMe = rememberMeElement ? rememberMeElement.checked : true;
+                const result = await CustomHttp.request(config.host + '/login', 'POST', {
+                    password: password,
+                    rememberMe: rememberMe, // Получение состояния rememberMeElement
+                    email: email,
+                });
+
+                if (result) {
+                    // console.log('result =', result.tokens.accessToken)
+                    // Проверка наличия токенов и пользователя
+                    if (!result.user || !result.tokens || !result.tokens.accessToken || !result.tokens.refreshToken) {
+                        throw new Error("Токены не были получены");
+                    }
+
+                    //сохраняем токены через класс Auth 1:02 Проект Quiz: часть 4
+                    Auth.setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+
+                    // Перенаправление на главную страницу в случае успеха
+                    location.href = '#/'
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+
+
+
+
             //////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////
 

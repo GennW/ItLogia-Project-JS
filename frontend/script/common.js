@@ -61,5 +61,16 @@
 
     // проверка url код см.  Проект: Quiz часть 2 43:15
 
+
+    // при нажатии на выход из системы ссылка в ссылке исправить!!!!!!!!!!!!!!!!!!!
+    // Найти элемент с классом "logout"
+    const logoutElement = document.querySelector('.logout');
+
+    // Добавить обработчик события click
+    logoutElement.addEventListener('click', function() {
+        // Изменить ссылку при клике
+        const parentElement = logoutElement.parentElement;
+        parentElement.href = 'https://www.google.com/';
+    });
 });
 

@@ -9,6 +9,7 @@ import { IncomeCostsCreate } from "./components/incomeCostsCreate.JS";
 import { IncomeCostsEdit } from "./components/incomeCostsEdit.JS";
 import { IncomeCreate } from "./components/incomeCreate.JS";
 import { IncomeEdit } from "./components/incomeEdit.JS";
+import { Auth } from "./components/services/auth.js";
 
 export class Router {
     constructor() {
@@ -18,6 +19,7 @@ export class Router {
                 title: 'Главная',
                 template: 'templates/index.html',
                 styles: 'css/index.css',
+                isAuth: true,
                 load: () => { // для скриптов под каждую страницу
                     
                     const diagram1 = new Diagram('myPieChart1', 'Доходы');
@@ -32,6 +34,7 @@ export class Router {
                 title: 'Регистрация',
                 template: 'templates/signup.html',
                 styles: '',
+                isAuth: false,
                 load: () => {
                     new Form('signup');
                 }
@@ -41,6 +44,7 @@ export class Router {
                 title: 'Авторизация',
                 template: 'templates/signin.html',
                 styles: '',
+                isAuth: false,
                 load: () => {
                     new Form('signin');
                 }
@@ -50,6 +54,7 @@ export class Router {
                 title: 'Расходы',
                 template: 'templates/costs.html',
                 styles: '',
+                isAuth: true,
                 load: () => {
                     new Costs();
                 }
@@ -59,6 +64,7 @@ export class Router {
                 title: 'Создание категории расходов',
                 template: 'templates/costsCreate.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new CostsCreate();
                 }
@@ -68,6 +74,7 @@ export class Router {
                 title: 'Редактирование категории расходов',
                 template: 'templates/costsEdit.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new CostsEdit();
                 }
@@ -77,6 +84,7 @@ export class Router {
                 title: 'Доходы',
                 template: 'templates/income.html',
                 styles: 'css/income.css',
+                isAuth: true,
                 load: () => {
                     new Income();
                 }
@@ -86,6 +94,7 @@ export class Router {
                 title: 'Доходы и расходы',
                 template: 'templates/incomeAndCosts.html',
                 styles: 'css/incomeAndCosts.css',
+                isAuth: true,
                 load: () => {
                     new IncomeAndCosts();
                 }
@@ -95,6 +104,7 @@ export class Router {
                 title: 'Создание дохода/расхода',
                 template: 'templates/incomeCostsCreate.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new IncomeCostsCreate();
                 }
@@ -104,6 +114,7 @@ export class Router {
                 title: 'Редактирование дохода/расхода',
                 template: 'templates/incomeCostsEdit.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new IncomeCostsEdit();
                 }
@@ -113,6 +124,7 @@ export class Router {
                 title: 'Создание категории доходов',
                 template: 'templates/incomeCreate.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new IncomeCreate();
                 }
@@ -122,6 +134,7 @@ export class Router {
                 title: 'Редактирование категории доходов',
                 template: 'templates/incomeEdit.html',
                 // styles: 'css/index.css',
+                isAuth: true,
                 load: () => {
                     new IncomeEdit();
                 }
@@ -136,9 +149,15 @@ export class Router {
         });
 
         if (!newRoute) {
+            console.log('Rout не найден!!!!!!!!!!')
             window.location.href = '#/';
             return;
         }
+
+        if (!Auth.checkAuth() && newRoute.isAuth) {
+            window.location.href = '#/signup'; // перенаправление на страницу авторизации
+            return;
+          }
 
         //24min
         document.getElementById('content').innerHTML =
@@ -146,6 +165,7 @@ export class Router {
                 .then(response => response.text());
 
         if (newRoute.styles && newRoute.styles.length > 0) {
+            console.log(document.getElementById('styles'))
             document.getElementById('styles').setAttribute('href', newRoute.styles);
         }
 

@@ -22,11 +22,14 @@ export class Auth {
                 if (result && !result.error) { // если нет ошибки
                     this.setTokens(result.tokens.accessToken, result.tokens.refreshToken); // устанавливаем новые токены
                     return true; // если все успешно обновилось то возвращаем true в custom-http в if(result)
-                } else {
-                    throw new Error(result.message);
-                }
+                } 
             }
         }
+
+        // если запрос пришел с ошибкой, то удаляем токены и переводим пользователя на страницу
+        this.removeTokens();
+        console.log('запрос пришел с ошибкой, токены удалены');
+        location.href = '#/signup';
 
         return false; // 1:18 Проект Quiz: часть 4
     } 
@@ -35,5 +38,17 @@ export class Auth {
     static setTokens(accessToken, refreshToken) {
         localStorage.setItem(this.accessTokenKey, accessToken);
         localStorage.setItem(this.refreshTokenKey, refreshToken);
+    }
+
+    static removeTokens() {
+        localStorage.removeItem(this.accessTokenKey);
+        localStorage.removeItem(this.refreshTokenKey);
+    }
+
+    static checkAuth() {
+        const accessToken = localStorage.getItem(this.accessTokenKey);
+        const refreshToken = localStorage.getItem(this.refreshTokenKey);
+    
+        return accessToken && refreshToken; // возвращает true, если оба токена существуют в localStorage, иначе возвращает false
     }
 }

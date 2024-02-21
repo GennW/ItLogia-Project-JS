@@ -1,7 +1,7 @@
 ﻿import config from "../../config/config.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
-config
+
 CustomHttp
 
 export class Diagram {
@@ -12,8 +12,24 @@ export class Diagram {
         this.canvas = document.getElementById(canvasId).getContext('2d');
         this.titleText = titleText; // Устанавливаем текст заголовка
 
+        this.addLogoutClickHandler(); // Вызов метода для добавления обработчика события click на logout
         // this.init();
     }
+
+    addLogoutClickHandler() {
+        // Найти все элементы с классом "logout"
+        const logoutElements = document.querySelectorAll('.logout');
+    
+        // Перебрать все найденные элементы и добавить обработчик события click
+        logoutElements.forEach(function(logoutElement) {
+            logoutElement.addEventListener('click', function(event) {
+                // Изменить ссылку при клике
+                const parentElement = logoutElement.parentElement;
+                parentElement.href = '/#/logout';
+            });
+        });
+    }
+    
 
     // async init() {
     //     try {
