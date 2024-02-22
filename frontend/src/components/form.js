@@ -206,7 +206,6 @@ export class Form {
                 });
 
                 if (result) {
-                    // console.log('result =', result.tokens.accessToken)
                     // Проверка наличия токенов и пользователя
                     if (!result.user || !result.tokens || !result.tokens.accessToken || !result.tokens.refreshToken) {
                         throw new Error("Токены не были получены");
@@ -214,6 +213,13 @@ export class Form {
 
                     //сохраняем токены через класс Auth 1:02 Проект Quiz: часть 4
                     Auth.setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+                    
+                    // сохраняем ино о пользователе обрабатываем в router
+                    Auth.setUserInfo({
+                        name: result.user.name,
+                        lastName: result.user.lastName,
+                        userId: result.user.id,
+                    })
 
                     // Перенаправление на главную страницу в случае успеха
                     location.href = '#/'

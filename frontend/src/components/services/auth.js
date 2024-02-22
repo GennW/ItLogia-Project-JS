@@ -51,4 +51,20 @@ export class Auth {
     
         return accessToken && refreshToken; // возвращает true, если оба токена существуют в localStorage, иначе возвращает false
     }
+
+    // устанавливаем информацию пользователя 
+    static setUserInfo(info) {
+        // в localStorage храняться только строки поэтому при размещении объекта JSON.stringify
+        localStorage.setItem('userInfo', JSON.stringify(info));
+    }
+
+    // получаем информацию пользователя 
+    static getUserInfo() {
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            return JSON.parse(userInfo);
+        }
+        
+        return null;
+    }
 }

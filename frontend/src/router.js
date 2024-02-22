@@ -13,6 +13,11 @@ import { Auth } from "./components/services/auth.js";
 
 export class Router {
     constructor() {
+        this.contentElement = document.getElementById('content');
+        this.stylesElement = document.getElementById('styles');
+        this.titleElement = document.getElementById('title');
+
+
         this.routes = [
             {
                 route: '#/',
@@ -159,17 +164,31 @@ export class Router {
             return;
           }
 
-        //24min
-        document.getElementById('content').innerHTML =
+        //24min + 1:41:50 Проект Quiz: часть 4
+        this.contentElement.innerHTML =
             await fetch(newRoute.template)
                 .then(response => response.text());
 
         if (newRoute.styles && newRoute.styles.length > 0) {
-            console.log(document.getElementById('styles'))
-            document.getElementById('styles').setAttribute('href', newRoute.styles);
+            this.stylesElement.setAttribute('href', newRoute.styles);
         }
 
-        document.getElementById('title').innerText = newRoute.title;
+        this.titleElement.innerText = newRoute.title;
+        
+        // обрабатываем данные пользователя  1:40:30 Проект Quiz: часть 4
+        
+        const userInfo = Auth.getUserInfo(); 
+        const accessToken = localStorage.getItem(Auth.accessTokenKey);
+        const profileFullName = document.getElementById('profile-full-name');
+
+        if (userInfo && accessToken) {
+            console.log('profileFullName', profileFullName);
+            profileFullName.innerText = `${userInfo.name} ${userInfo.lastName}`;
+        } else {
+            if (profileFullName) {
+                profileFullName.innerText = 'User'
+            }
+        }
 
         newRoute.load();
 

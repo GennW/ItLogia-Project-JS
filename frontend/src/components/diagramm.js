@@ -7,7 +7,7 @@ CustomHttp
 export class Diagram {
     // Конструктор класса, принимает идентификатор  и текст заголовка
     constructor(canvasId, titleText) {
-        
+
         // Получаем контекст рисования 
         this.canvas = document.getElementById(canvasId).getContext('2d');
         this.titleText = titleText; // Устанавливаем текст заголовка
@@ -16,24 +16,28 @@ export class Diagram {
         // this.init();
     }
 
+    // выход из системы разлогирование
     addLogoutClickHandler() {
-        // Найти все элементы с классом "logout"
-        const logoutElements = document.querySelectorAll('.logout');
-    
-        // Перебрать все найденные элементы и добавить обработчик события click
-        logoutElements.forEach(function(logoutElement) {
-            logoutElement.addEventListener('click', function(event) {
+        // Найти первый элемент с классом "logout"
+        const logoutElement = document.querySelector('.logout');
+        console.log(logoutElement)
+
+        // Если элемент был найден, добавить ему обработчик события click
+        if (logoutElement) {
+            logoutElement.addEventListener('click', function (event) {
                 // Изменить ссылку при клике
-                const parentElement = logoutElement.parentElement;
-                parentElement.href = '/#/logout';
+                const parentElement = logoutElement.closest('.dropdown');
+                const linkElement = parentElement.querySelector('a');
+                linkElement.href = '#/logout';
             });
-        });
+        }
     }
-    
+
+
 
     // async init() {
     //     try {
-                    
+
     //         const result = await CustomHttp.request(config.host + '');
 
     //         if (result) {
@@ -41,14 +45,14 @@ export class Diagram {
     //                 throw new Error(result.message);
     //             }
     //             // что то делаем 57 минута Проект Quiz: часть 4
-            
+
     //         }
 
     //     } catch (error) {
     //         console.log(error);
     //     }
     // }
- 
+
     // Статический метод для создания данных для первой диаграммы
     static createDataCanvas1() {
         return {
@@ -60,7 +64,7 @@ export class Diagram {
             }]
         };
     }
- 
+
     // Статический метод для создания данных для второй диаграммы
     static createDataCanvas2() {
         return {
@@ -72,7 +76,7 @@ export class Diagram {
             }]
         };
     }
- 
+
     // Метод для создания диаграммы с переданными данными
     createChart(data) {
         return new Chart(this.canvas, {
@@ -105,17 +109,16 @@ export class Diagram {
             }
         });
     }
- 
+
     // Метод для создания диаграммы с данными из createDataCanvas1
     createChartWithCanvas1() {
         const dataCanvas1 = Diagram.createDataCanvas1(); // Создание данных для первой диаграммы
         return this.createChart(dataCanvas1); // Создание и отображение диаграммы
     }
- 
+
     // Метод для создания диаграммы с данными из createDataCanvas2
     createChartWithCanvas2() {
         const dataCanvas2 = Diagram.createDataCanvas2(); // Создание данных для второй диаграммы
         return this.createChart(dataCanvas2); // Создание и отображение диаграммы
     }
- }
- 
+}
