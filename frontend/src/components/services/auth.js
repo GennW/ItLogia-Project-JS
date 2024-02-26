@@ -3,6 +3,7 @@ import config from "../../../config/config.js";
 export class Auth {
     static accessTokenKey = 'tokens.accessToken';
     static refreshTokenKey = 'tokens.refreshToken';
+    static UserInfoKey = 'userInfo';
 
     static async processUnautorizedResponse() {     // 1:12:30 Проект Quiz: часть 4
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
@@ -13,7 +14,7 @@ export class Auth {
                     'Content-type': 'application/json',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify( {refreshToken: refreshToken} )
+                body: JSON.stringify({ refreshToken: refreshToken })
             });
 
             // проверяем ответ от сервера
@@ -22,7 +23,7 @@ export class Auth {
                 if (result && !result.error) { // если нет ошибки
                     this.setTokens(result.tokens.accessToken, result.tokens.refreshToken); // устанавливаем новые токены
                     return true; // если все успешно обновилось то возвращаем true в custom-http в if(result)
-                } 
+                }
             }
         }
 
@@ -32,7 +33,7 @@ export class Auth {
         location.href = '#/signup';
 
         return false; // 1:18 Проект Quiz: часть 4
-    } 
+    }
 
 
     static setTokens(accessToken, refreshToken) {
@@ -48,23 +49,48 @@ export class Auth {
     static checkAuth() {
         const accessToken = localStorage.getItem(this.accessTokenKey);
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
-    
+
         return accessToken && refreshToken; // возвращает true, если оба токена существуют в localStorage, иначе возвращает false
     }
 
     // устанавливаем информацию пользователя 
     static setUserInfo(info) {
         // в localStorage храняться только строки поэтому при размещении объекта JSON.stringify
-        localStorage.setItem('userInfo', JSON.stringify(info));
+        localStorage.setItem(this.UserInfoKey, JSON.stringify(info));
     }
 
     // получаем информацию пользователя 
     static getUserInfo() {
-        const userInfo = localStorage.getItem('userInfo');
+        const userInfo = localStorage.getItem(this.UserInfoKey);
         if (userInfo) {
             return JSON.parse(userInfo);
         }
-        
+
         return null;
+    }
+
+    static async logout() {
+        // запрос на серврдля удаления токенов при разлогировании        
+        const refreshToken = localStorage.getItem(this.refreshTokenKey);
+        if (refreshToken) {
+            const response = await fetch(config.host + '/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ refreshToken: refreshToken })
+            });
+
+            // проверяем ответ от сервера
+            if (response && response.status === 200) { // 1:17  Проект Quiz: часть 4
+                const result = await response.json(); // берем ответ от сервера
+                if (result && !result.error) { // если нет ошибки
+                    Auth.removeTokens();
+                    localStorage.removeItem(Auth.UserInfoKey);
+                    return true;
+                }
+            }
+        }
     }
 }

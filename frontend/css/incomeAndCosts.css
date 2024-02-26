@@ -11,3 +11,9 @@
 .modal-footer .btn-success {
     width: 103px;
 }
+
+.btn-wrapper .btn {
+    width: 100px;
+    height: 37px;
+    
+}

@@ -12,26 +12,9 @@ export class Diagram {
         this.canvas = document.getElementById(canvasId).getContext('2d');
         this.titleText = titleText; // Устанавливаем текст заголовка
 
-        this.addLogoutClickHandler(); // Вызов метода для добавления обработчика события click на logout
-        // this.init();
+       
     }
 
-    // выход из системы разлогирование
-    addLogoutClickHandler() {
-        // Найти первый элемент с классом "logout"
-        const logoutElement = document.querySelector('.logout');
-        console.log(logoutElement)
-
-        // Если элемент был найден, добавить ему обработчик события click
-        if (logoutElement) {
-            logoutElement.addEventListener('click', function (event) {
-                // Изменить ссылку при клике
-                const parentElement = logoutElement.closest('.dropdown');
-                const linkElement = parentElement.querySelector('a');
-                linkElement.href = '#/logout';
-            });
-        }
-    }
 
 
 

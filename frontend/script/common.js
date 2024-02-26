@@ -68,9 +68,14 @@
 
     // Добавить обработчик события click
     logoutElement.addEventListener('click', function() {
-        // Изменить ссылку при клике
-        const parentElement = logoutElement.parentElement;
-        parentElement.href = 'https://www.google.com/';
+        if (logoutElement) {
+            logoutElement.addEventListener('click', function (event) {
+                // Изменить ссылку при клике
+                const parentElement = logoutElement.closest('.dropdown');
+                const linkElement = parentElement.querySelector('a');
+                linkElement.href = '#/logout';
+            });
+        }
     });
 });
-
+ 

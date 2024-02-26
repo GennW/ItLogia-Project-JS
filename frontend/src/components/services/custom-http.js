@@ -46,7 +46,7 @@ export class CustomHttp {
             }
 
 
-            alert('Пользователь с такими данными не зарегистрирован');
+            alert('Что-то пошло не так');
             throw new Error(response.message);
         }
         // console.log(response)
