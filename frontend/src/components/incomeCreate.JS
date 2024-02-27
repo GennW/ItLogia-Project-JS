@@ -18,16 +18,30 @@ export class IncomeCreate {
     }
 
     async createCategory() {
-        const newCategoryName = this.newCategoryNameElement.value;
-        console.log(newCategoryName)
-        if (newCategoryName.trim() !== '') {
+        // Получаем значение нового имени категории из элемента формы
+        let newCategoryName = this.newCategoryNameElement.value;
+
+        // Форматируем новое имя категории: делаем первую букву заглавной и все остальные буквы строчными
+        const formattedCategoryName = newCategoryName.trim() !== '' ? newCategoryName.charAt(0).toUpperCase() + newCategoryName.slice(1).toLowerCase() : '';
+
+        // Присваиваем отформатированное имя обратно переменной newCategoryName (если желаете сохранить это значение)
+        newCategoryName = formattedCategoryName;
+        if (formattedCategoryName !== '') { // Проверяем, что отформатированное имя не пустое
             try {
                 const response = await CustomHttp.request(config.host + '/categories/income', 'POST', { title: newCategoryName });
+
                 // Обработка ответа от сервера
-                console.log('Ответ сервера:', response);
+                console.log(`Новая категория "${formattedCategoryName}" создана`);
+                location.href = '#/income';
+
+                
             } catch (error) {
-                // Обработка ошибки
-                console.error('Ошибка:', error);
+                if (error) {
+                    alert(`Категория "${formattedCategoryName}" уже существует`);
+                } else {
+                    // Обработка ошибки
+                    console.error('Ошибка:', error);
+                }
             }
         } else {
             // Обработка ошибки пустого ввода

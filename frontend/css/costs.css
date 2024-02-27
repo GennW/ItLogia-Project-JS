@@ -1,0 +1,31 @@
+.card {
+    width: 352px;
+    height: 121px;
+}
+
+.card-title {
+    font-size: 1.75rem;
+}
+
+.btn {
+    --bs-btn-font-size: 0.875rem;
+}
+
+.card:last-child .card-body {
+    font-size: 28px;
+    line-height: 33px;
+    color: #CED4DA;
+}
+
+/* modal */
+.modal-footer {
+    border-top: 0;
+    justify-content: center;
+}
+.modal-header {
+    border-bottom: 0;
+}
+.modal-title {
+    text-align: center;
+}
+

@@ -44,9 +44,7 @@ export class CustomHttp {
                 }
 
             }
-
-
-            alert('Что-то пошло не так');
+            // alert('Что-то пошло не так');
             throw new Error(response.message);
         }
         // console.log(response)

@@ -65,7 +65,7 @@ export class Router {
                 route: '#/costs',
                 title: 'Расходы',
                 template: 'templates/costs.html',
-                styles: '',
+                styles: 'css/costs.css',
                 additionalStyle: '',
                 isAuth: true,
                 load: () => {
