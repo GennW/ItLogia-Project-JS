@@ -1,53 +1,66 @@
+import config from "../../config/config.js";
 import { UrlManager } from "../utils/url-manager.js";
+import { CustomHttp } from "./services/custom-http.js";
+
 
 
 export class IncomeEdit {
     constructor() {
         this.routeParams = UrlManager.getQueryParams();
+        this.cancelModifiedCostsCategory();
+        this.initializeUpdateIncomeCategoryListener(); // Инициализация слушателя для обновления категории дохода
+        this.populateInputWithRouteParamsTitle(); // Вызов метода подстановки значения routeParams.title в input
+    }
+    
+
+    // Дополнительный метод для подстановки значения из routeParams.title в input
+    populateInputWithRouteParamsTitle() {
+        const editCategoryInputElement = document.getElementById('edit-category-input');
+        editCategoryInputElement.value = this.routeParams.title; // Подстановка значения из routeParams.title в инпут
     }
 
-     //редактирование категрии
-     async editCategory(dataId) {
+    // Метод для обновления категории дохода
+    async updateIncomeCategory(title) {
         try {
-            // Выполнить запрос PUT к API с передачей идентификатора категории
-            categotyEdit = await CustomHttp.request(config.host + '/categories/income/' + dataId, 'PUT');
-            if (this.categotyEdit) {
-                console.log(this.categotyEdit)
-                if (this.categotyEdit.error) {
-                    throw new Error(this.categotyEdit.error);
-                }
+            // Создаем объект данных с новым заголовком
+            const data = { title: title };
+            // Выполняем запрос на сервер для обновления категории дохода
+            const result = await CustomHttp.request(config.host + '/categories/income/' + this.routeParams.id, 'PUT', data);
+            // Проверяем наличие ошибок в результате запроса
+            if (result.error) {
+                throw new Error(result.error);
             }
+            console.log('Категория успешно изменена:', result);
+            // Перенаправляем пользователя на страницу с доходами после успешного обновления
+            location.href = '#/income';
         } catch (error) {
-            console.error(error);
+            console.error('Ошибка при сохранении изменений категории:', error);
         }
     }
 
-    editCategoryIncome(element) {
-        if (!element) {
-            console.error('Отсутствует элемент для правки категории');
-            return;
+    // Инициализация слушателя события для кнопки сохранения измененной категории
+    initializeUpdateIncomeCategoryListener() {
+        // Получаем элемент кнопки сохранения
+        const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
+
+
+        saveModifiedCategoryElement.addEventListener('click', () => { // Добавляем слушателя события для нажатия на кнопку
+            const editCategoryInputElement = document.getElementById('edit-category-input');
+            const title = editCategoryInputElement.value; // Получаем значение нового заголовка категории
+            this.updateIncomeCategory(title); // Вызываем метод обновления категории с новым заголовком
+        });
+    }
+
+    // Метод для отмены изменения категории income
+    cancelModifiedCostsCategory() {
+        const cancelModifiedCategoryElement = document.getElementById('cancel-modified-category-btn');
+        if (cancelModifiedCategoryElement) {
+            cancelModifiedCategoryElement.addEventListener('click', () => { // Добавляем слушателя события для нажатия на кнопку
+                location.href = '#/income';
+            });
+        } else {
+            console.log('id не найден');
         }
 
-        const dataId = element.getAttribute('data-id'); // Получаем идентификатор категории из data-id
-
-        if (dataId) {
-
-            // удаление модального окна и переход на новую страницу будут происходить только при успешном удалении категории
-            try {
-                // Выполняем запрос на удаление категории
-                const editionResult = this.editCategory(dataId);
-                // Проверяем успешность удаления перед переходом на новую страницу
-                if (editionResult && !editionResult.error) {
-                    // Успешное удаление - переходим на новую страницу
-                    location.href = '#/income';
-                } else {
-                    // В случае ошибки выводим сообщение в консоль и не переходим на новую страницу
-                    console.error('Ошибка при удалении категории:', editionResult.message);
-                }
-
-            } catch (error) {
-                throw new Error('Ошибка при удалении категории:', error);
-            }
-        }
     }
 }

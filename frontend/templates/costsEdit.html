@@ -61,7 +61,7 @@
                                                 aria-current="true">
                                                 Доходы
                                             </a>
-                                            <a href="javascript:void(0)"
+                                            <a href="#/costs"
                                                 class="list-group-item list-group-item-action active">
                                                 Расходы
                                             </a>
@@ -125,10 +125,10 @@
         <h1 class="main-title my-5">Редактирование категории расходов</h1>
         <div class="row">
             <div class="col-4 mb-3">
-                <input class="form-control" type="text" placeholder="Жильё">
+                <input id="edit-category-input" class="form-control" type="text" placeholder="Введите новое название">
             </div>
         </div>
-        <a href="javascript:void(0)" class="btn btn-success btn-create">Сохранить</a>
-        <a href="javascript:void(0)" class="btn btn-danger btn-create mx-1">Отмена</a>
+        <a href="javascript:void(0)" class="btn btn-success btn-create" id="save-modified-category-btn">Сохранить</a>
+        <a href="javascript:void(0)" class="btn btn-danger btn-create mx-1" id="cancel-modified-category-btn">Отмена</a>
     </div>
 </div>

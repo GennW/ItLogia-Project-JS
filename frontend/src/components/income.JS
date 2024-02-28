@@ -6,24 +6,26 @@ import { CustomHttp } from "./services/custom-http.js";
 
 export class Income {
     constructor() {
-        this.routeParams = UrlManager.getQueryParams();
         this.income = [];
-        this.getCategories();
         this.categotyDelete = null;
-        this.categotyEdit = null;
+
+        this.getIncomeCategories(); // Получение категорий при создании экземпляра класса
+
     }
 
-    async getCategories() {
+    // Получение списка категорий
+    async getIncomeCategories() {
 
         try {
+            // Запрос к API для получения категорий дохода
             const result = await CustomHttp.request(config.host + '/categories/income');
             if (result) {
                 if (result.error) {
                     throw new Error(result.message)
                 }
 
-                this.income = result;
-                this.processIncome();
+                this.income = result; // Сохранение полученных категорий в массив
+                this.processIncome(); // Отображение категорий на странице
             }
 
         } catch (error) {
@@ -32,63 +34,24 @@ export class Income {
         }
     }
 
-    //Удаление категории
-    async deleteCategory(dataId) {
-        try {
-            // Выполнить запрос DELETE к API с передачей идентификатора категории
-            this.categotyDelete = await CustomHttp.request(config.host + '/categories/income/' + dataId, 'DELETE');
-            if (this.categotyDelete) {
-                if (this.categotyDelete.error) {
-                    throw new Error(this.categotyDelete.error);
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
-   
-
+    // Обработка и отображение категорий дохода на странице
     processIncome() {
         const container = document.querySelector('.main-items');
         const deleteCategoryElement = document.getElementById('delete-category');
-        const editCategoryElement = document.getElementById('edit-category');
 
 
         this.income.forEach(category => {
             const that = this;
 
+            // Создание элементов для отображения категорий
             const card = document.createElement('div');
             const cardBody = document.createElement('div');
             const title = document.createElement('h5');
             const editButton = document.createElement('a');
             const deleteButton = document.createElement('a');
 
-            /////////////////////////////////////////
-            //////////////////////////////////////////
 
-            // Добавление обработчика события клика для кнопки удаления
-            deleteButton.onclick = () => {
-                this.populateModal(category.title, category.id); // Передаем название и идентификатор категории в метод для заполнения модального окна
-            }
-
-            // Добавление обработчика события клика для кнопки удаления модального окна
-            deleteCategoryElement.onclick = function () {
-                that.deleteCategoryIncome(this)
-            }
-
-
-            // Добавление обработчика события клика для кнопки редактирования
-            editButton.onclick = () => {
-                location.href = '#/incomeEdit' + category.id;
-
-                // this.editCategory(category.id); // Передаем идентификатор категории в метод 
-            }
-
-            // Добавление обработчика события клика для кнопки редактирования 
-            editCategoryElement.onclick = function () {
-                that.editCategoryIncome(this)
-            }
             card.classList.add('card', 'col-12', 'col-md-6', 'col-lg-4', 'm-2');
             cardBody.classList.add('card-body');
             title.classList.add('card-title', 'mb-3');
@@ -112,6 +75,23 @@ export class Income {
             cardBody.appendChild(deleteButton);
             card.appendChild(cardBody);
             container.appendChild(card);
+
+
+            // Обработчики событий для кнопок удаления, редактирования
+            // Добавление обработчика события клика для кнопки удаления
+            deleteButton.onclick = () => {
+                this.populateModal(category.title, category.id); // Передаем название и идентификатор категории в метод для заполнения модального окна
+            }
+
+            // Добавление обработчика события клика для кнопки удаления модального окна
+            deleteCategoryElement.onclick = function () {
+                that.deleteCategoryIncome(this)
+            }
+
+            // Добавление обработчика события клика для кнопки редактирования ПЕРЕДАЧА ID на другую страницу
+            editButton.onclick = () => {
+                location.href = '#/incomeEdit?id=' + category.id + '&title=' + category.title;
+            }
         });
 
         // Создание элемента "Добавить новую категорию"
@@ -139,51 +119,34 @@ export class Income {
         deleteCategoryButton.setAttribute('data-id', id); // Устанавливаем data-id для кнопки "удалить" в модальном окне, чтобы иметь доступ к идентификатору категории при подтверждении удаления
     }
 
-    // editPage(id) {
-    //     const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
-    //     const editCategoryInputElement = document.getElementById('edit-category-input');
-
-    //     saveModifiedCategoryElement.setAttribute('data-id', id);
-    //     console.log(editCategoryInputElement.value);
-
-    // }
-
-    deleteCategoryIncome(element) {
-        if (!element) {
-            console.error('Отсутствует элемент для удаления категории');
-            return;
-        }
-
+    // Удаление категории доходов
+    async deleteCategoryIncome(element) {
         const dataId = element.getAttribute('data-id'); // Получаем идентификатор категории из data-id
 
         if (dataId) {
-
-            // удаление модального окна и переход на новую страницу будут происходить только при успешном удалении категории
             try {
-                // Выполняем запрос на удаление категории
-                const deletionResult = this.deleteCategory(dataId);
-                // Проверяем успешность удаления перед переходом на новую страницу
-                if (deletionResult && !deletionResult.error) {
-                    // Успешное удаление - переходим на новую страницу
-                    location.href = '#/income';
-                } else {
-                    // В случае ошибки выводим сообщение в консоль и не переходим на новую страницу
-                    console.error('Ошибка при удалении категории:', deletionResult.message);
+                // Выполняем запрос DELETE к API с передачей идентификатора категории
+                const deletionResult = await CustomHttp.request(config.host + '/categories/income/' + dataId, 'DELETE');
+
+                if (deletionResult) {
+                    if (deletionResult.error) {
+                        console.error('Ошибка при удалении категории:', deletionResult.error);
+                    } else {
+                        // Успешное удаление - переходим на новую страницу
+                        location.href = '#/income';
+                    }
                 }
-
             } catch (error) {
-                throw new Error('Ошибка при удалении категории:', error);
-            }
-
-            // Удаление модального окна
-            const modalBackdrop = document.querySelector('.modal-backdrop.show');
-
-            if (modalBackdrop) {
-                // Удаляем элемент
-                modalBackdrop.remove();
+                console.error('Ошибка при удалении категории:', error);
             }
         }
+
+        // Удаление модального окна
+        const modalBackdrop = document.querySelector('.modal-backdrop.show');
+
+        if (modalBackdrop) {
+            // Удаляем элемент
+            modalBackdrop.remove();
+        }
     }
-
-
 }
