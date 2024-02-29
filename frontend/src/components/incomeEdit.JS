@@ -1,4 +1,6 @@
 import config from "../../config/config.js";
+import { InputValidation } from "../../config/inputValid.js";
+import { PutTitleInInput } from "../../config/putTitle.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
 
@@ -13,10 +15,9 @@ export class IncomeEdit {
     }
     
 
-    // Дополнительный метод для подстановки значения из routeParams.title в input
+    // вызов метод для подстановки значения из routeParams.title в input
     populateInputWithRouteParamsTitle() {
-        const editCategoryInputElement = document.getElementById('edit-category-input');
-        editCategoryInputElement.value = this.routeParams.title; // Подстановка значения из routeParams.title в инпут
+        PutTitleInInput.populateInputWithRouteParamsTitle(this.routeParams)
     }
 
     // Метод для обновления категории дохода
@@ -38,18 +39,19 @@ export class IncomeEdit {
         }
     }
 
-    // Инициализация слушателя события для кнопки сохранения измененной категории
-    initializeUpdateIncomeCategoryListener() {
-        // Получаем элемент кнопки сохранения
-        const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
 
-
-        saveModifiedCategoryElement.addEventListener('click', () => { // Добавляем слушателя события для нажатия на кнопку
-            const editCategoryInputElement = document.getElementById('edit-category-input');
-            const title = editCategoryInputElement.value; // Получаем значение нового заголовка категории
-            this.updateIncomeCategory(title); // Вызываем метод обновления категории с новым заголовком
-        });
-    }
+        // Инициализация слушателя события для кнопки сохранения измененной категории
+        initializeUpdateIncomeCategoryListener() {
+            // Получаем элемент кнопки сохранения
+            const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
+            const inputValidation = new InputValidation('edit-category-input'); //можно передать в роуты
+     
+            // Добавляем слушателя события для нажатия на кнопку сохранения
+            saveModifiedCategoryElement.addEventListener('click', () => {
+                const title = inputValidation.inputElement.value;
+                this.updateIncomeCategory(title); // Вызываем метод обновления категории с новым заголовком
+            });
+        }
 
     // Метод для отмены изменения категории income
     cancelModifiedCostsCategory() {

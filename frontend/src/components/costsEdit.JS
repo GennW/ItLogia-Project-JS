@@ -1,4 +1,5 @@
 import config from "../../config/config.js";
+import { InputValidation } from "../../config/inputValid.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
 
@@ -11,11 +12,11 @@ export class CostsEdit {
         this.populateInputWithRouteParamsTitle();
     }
 
-        // Дополнительный метод для подстановки значения из routeParams.title в input
-        populateInputWithRouteParamsTitle() {
-            const editCategoryInputElement = document.getElementById('edit-category-input');
-            editCategoryInputElement.value = this.routeParams.title; // Подстановка значения из routeParams.title в инпут
-        }
+    // Дополнительный метод для подстановки значения из routeParams.title в input
+    populateInputWithRouteParamsTitle() {
+        const editCategoryInputElement = document.getElementById('edit-category-input');
+        editCategoryInputElement.value = this.routeParams.title; // Подстановка значения из routeParams.title в инпут
+    }
 
 
     // Метод для обновления категории costs
@@ -37,17 +38,19 @@ export class CostsEdit {
         }
     }
 
-        // Инициализация слушателя события для кнопки сохранения измененной категории
-        initializeUpdateCostsCategoryListener() {
-            // Получаем элемент кнопки сохранения
-            const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
-            const editCategoryInputElement = document.getElementById('edit-category-input');
-            
-            saveModifiedCategoryElement.addEventListener('click', () => { // Добавляем слушателя события для нажатия на кнопку
-                const title = editCategoryInputElement.value.slice(0, 19); // обрезаем введенный текст до 19 символов чтобы  тект вмещался в карточку
-                this.updateCostsCategory(title); // Вызываем метод обновления категории с новым заголовком
-            });
-        }
+    // Инициализация слушателя события для кнопки сохранения измененной категории
+    initializeUpdateCostsCategoryListener() {
+        // Получаем элемент кнопки сохранения
+        const saveModifiedCategoryElement = document.getElementById('save-modified-category-btn');
+        const inputValidation = new InputValidation('edit-category-input'); //можно передать в роуты
+ 
+        // Добавляем слушателя события для нажатия на кнопку сохранения
+        saveModifiedCategoryElement.addEventListener('click', () => {
+            const title = inputValidation.inputElement.value;
+            this.updateCostsCategory(title); // Вызываем метод обновления категории с новым заголовком
+        });
+    }
+
 
 
 

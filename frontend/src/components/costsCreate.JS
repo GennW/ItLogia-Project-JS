@@ -1,4 +1,5 @@
 import config from "../../config/config.js";
+import { InputValidation } from "../../config/inputValid.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
 
@@ -23,20 +24,24 @@ export class CostsCreate {
         let newCategoryName = this.newCategoryNameElement.value;
 
         // Форматируем новое имя категории: делаем первую букву заглавной и все остальные буквы строчными
-        const formattedCategoryName = newCategoryName.trim() !== '' ? newCategoryName.charAt(0).toUpperCase() + newCategoryName.slice(1).toLowerCase() : '';
+        const inputValidation = new InputValidation('new-cost-category-name');
+        if (inputValidation.inputElement) {
+            newCategoryName = inputValidation.inputElement.value; // Получаем отформатированное значение из экземпляра InputValidation
 
-        // Присваиваем отформатированное имя обратно переменной newCategoryName (если желаете сохранить это значение)
-        newCategoryName = formattedCategoryName;
-        if (formattedCategoryName !== '') {
+        } else {
+            console.log('Элемент с id не найден');
+            return;
+        }
+
+        if (newCategoryName !== '') {
             try {
                 const response = await CustomHttp.request(config.host + '/categories/expense', 'POST', { title: newCategoryName });
-                // Обработка ответа от сервера
-                alert(`Новая категория "${formattedCategoryName}" создана`);
+
                 location.href = '#/costs';
 
             } catch (error) {
                 if (error) {
-                    alert(`Категория "${formattedCategoryName}" уже существует`);
+                    alert(`Категория "${newCategoryName}" уже существует`);
                 } else {
                     // Обработка ошибки
                     console.error('Ошибка:', error);
