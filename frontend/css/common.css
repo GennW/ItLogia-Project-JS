@@ -123,3 +123,9 @@ body {
 /* .modal-footer .btn-success {
     width: 111px;
 } */
+
+/* стили для placeholder */
+.select-placeholder {
+    color: #e9ecef; 
+}
+
