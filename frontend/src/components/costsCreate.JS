@@ -55,5 +55,7 @@ export class CostsCreate {
 
     clearCategory() {
         this.newCategoryNameElement.value = ''; // Очищаем значение поля
+        
+        location.href = '#/costs';
     }
 }

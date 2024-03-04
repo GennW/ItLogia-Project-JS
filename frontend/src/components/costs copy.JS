@@ -4,28 +4,27 @@ import { CustomHttp } from "./services/custom-http.js";
 
 
 
-export class Income {
+export class Costs {
     constructor() {
-        this.income = [];
-        this.categotyDelete = null;
+        this.routeParams = UrlManager.getQueryParams();
+        this.costs = [];
 
-        this.getIncomeCategories(); // Получение категорий при создании экземпляра класса
 
+        this.getCategories();
     }
 
-    // Получение списка категорий
-    async getIncomeCategories() {
+    async getCategories() {
 
         try {
-            // Запрос к API для получения категорий дохода
-            const result = await CustomHttp.request(config.host + '/categories/income');
+            const result = await CustomHttp.request(config.host + '/categories/expense');
             if (result) {
                 if (result.error) {
                     throw new Error(result.message)
                 }
 
-                this.income = result; // Сохранение полученных категорий в массив
-                this.processIncome(); // Отображение категорий на странице
+                this.costs = result;
+                this.processCosts();
+
             }
 
         } catch (error) {
@@ -34,30 +33,32 @@ export class Income {
         }
     }
 
+    processCosts() {
 
-    // Обработка и отображение категорий дохода на странице
-    processIncome() {
+        // Находим контейнер, в котором будем отрисовывать категории
         const container = document.querySelector('.main-items');
+
         const deleteCategoryElement = document.getElementById('delete-category');
 
 
-        this.income.forEach(category => {
+        // Проходимся по массиву категорий и создаем для каждой категории соответствующий HTML-элемент
+        this.costs.forEach(category => {
             const that = this;
-
-            // Создание элементов для отображения категорий
+            // Создаем элементы
             const card = document.createElement('div');
             const cardBody = document.createElement('div');
             const title = document.createElement('h5');
             const editButton = document.createElement('a');
             const deleteButton = document.createElement('a');
 
-
+            // Добавляем классы элементам
             card.classList.add('card', 'col-12', 'col-md-6', 'col-lg-4', 'm-2');
             cardBody.classList.add('card-body');
             title.classList.add('card-title', 'mb-3');
-            editButton.classList.add('btn', 'btn-primary', 'me-3');
+            editButton.classList.add('btn', 'btn-primary', 'me-2');
             deleteButton.classList.add('btn', 'btn-danger');
 
+            // Устанавливаем текст и атрибуты элементов
             title.textContent = category.title;
             editButton.textContent = 'Редактировать';
             editButton.href = 'javascript:void(0)';
@@ -66,16 +67,15 @@ export class Income {
             deleteButton.setAttribute('data-bs-toggle', 'modal');
             deleteButton.setAttribute('data-bs-target', '#exampleModal');
 
-            // берем с бекенда и назначаем id карточкам
-            card.setAttribute('data-id', category.id);
-
-
+            // Добавляем дочерние элементы карточкам
             cardBody.appendChild(title);
             cardBody.appendChild(editButton);
             cardBody.appendChild(deleteButton);
             card.appendChild(cardBody);
-            container.appendChild(card);
+            card.appendChild(cardBody);
 
+            // Добавляем карточку к контейнеру
+            container.appendChild(card);
 
             // Обработчики событий для кнопок удаления, редактирования
             // Добавление обработчика события клика для кнопки удаления
@@ -85,55 +85,59 @@ export class Income {
 
             // Добавление обработчика события клика для кнопки удаления модального окна
             deleteCategoryElement.onclick = function () {
-                that.deleteCategoryIncome(this)
+                that.deleteCategoryCost(this)
             }
 
             // Добавление обработчика события клика для кнопки редактирования ПЕРЕДАЧА ID на другую страницу
             editButton.onclick = () => {
-                location.href = '#/incomeEdit?id=' + category.id + '&title=' + category.title;
+                location.href = '#/costsEdit?id=' + category.id + '&title=' + category.title;
             }
+
         });
 
-        // Создание элемента "Добавить новую категорию"
-        const newCategoryCard = document.createElement('div');
-        const newCategoryCardBody = document.createElement('div');
-        const link = document.createElement('a');
+        // Создаем элемент "Добавить новую категорию"
+        const newCategoryCard = document.createElement('div'); // Создаем элемент div для обертки
+        const newCategoryCardBody = document.createElement('div'); // Создаем элемент div для содержимого карточки
+        const link = document.createElement('a'); // Создаем элемент a для ссылки
 
-        newCategoryCard.classList.add('card', 'col-12', 'col-md-6', 'col-lg-4', 'm-2');
-        newCategoryCardBody.classList.add('card-body', 'card-body-last', 'd-flex', 'align-items-center', 'justify-content-center');
-        link.classList.add('link-secondary', 'link-offset-2', 'link-underline', 'link-underline-opacity-0');
-        link.textContent = '+';
-        link.href = '#/incomeCreate';
+        // Добавляем классы к созданным элементам
+        newCategoryCard.classList.add('card', 'col-12', 'col-md-6', 'col-lg-4', 'm-2'); // Добавляем классы карточке
+        newCategoryCardBody.classList.add('card-body', 'card-body-last', 'd-flex', 'align-items-center', 'justify-content-center'); // Добавляем классы для содержимого карточки
+        link.classList.add('link-secondary', 'link-offset-2', 'link-underline', 'link-underline-opacity-0'); // Добавляем классы для ссылки
 
-        newCategoryCardBody.appendChild(link);
-        newCategoryCard.appendChild(newCategoryCardBody);
-        container.appendChild(newCategoryCard);
+        link.textContent = '+'; // Устанавливаем текст содержимому ссылки
+        link.href = '#/costsCreate'; // Добавляем href ссылке
+
+        newCategoryCardBody.appendChild(link); // Добавляем ссылку в содержимое карточки
+        newCategoryCard.appendChild(newCategoryCardBody); // Добавляем содержимое карточки в карточку
+        container.appendChild(newCategoryCard); // Добавляем карточку в контейнер
+
     }
 
-    // заполняем модальное окно инфо о выбранной категории. 
+        // заполняем модальное окно инфо о выбранной категории. 
     //устанавливам идентификатор категории в атрибут data-id кнопки "удалить" в модальном окне.
     populateModal(title, id) {
         const modalTitle = document.querySelector('.modal-title'); // Находим элемент с заголовком модального окна
         const deleteCategoryButton = document.getElementById('delete-category'); // Находим кнопку "удалить" в модальном окне
-        modalTitle.textContent = `Вы действительно хотите удалить категорию "${title}"? Связанные доходы будут удалены навсегда.`;
+        modalTitle.textContent = `Вы действительно хотите удалить категорию "${title}"? Связанные расходы будут удалены навсегда.`;
         deleteCategoryButton.setAttribute('data-id', id); // Устанавливаем data-id для кнопки "удалить" в модальном окне, чтобы иметь доступ к идентификатору категории при подтверждении удаления
     }
 
-    // Удаление категории доходов
-    async deleteCategoryIncome(element) {
+    // Удаление категории расходов
+    async deleteCategoryCost(element) {
         const dataId = element.getAttribute('data-id'); // Получаем идентификатор категории из data-id
 
         if (dataId) {
             try {
                 // Выполняем запрос DELETE к API с передачей идентификатора категории
-                const deletionResult = await CustomHttp.request(config.host + '/categories/income/' + dataId, 'DELETE');
+                const deletionResult = await CustomHttp.request(config.host + '/categories/expense/' + dataId, 'DELETE');
 
                 if (deletionResult) {
                     if (deletionResult.error) {
                         console.error('Ошибка при удалении категории:', deletionResult.error);
                     } else {
                         // Успешное удаление - переходим на новую страницу
-                        location.href = '#/income';
+                        location.href = '#/costs';
                     }
                 }
             } catch (error) {
@@ -143,7 +147,6 @@ export class Income {
 
         // Удаление модального окна
         const modalBackdrop = document.querySelector('.modal-backdrop.show');
-        console.log('modalBackdrop', modalBackdrop)
 
         if (modalBackdrop) {
             // Удаляем элемент

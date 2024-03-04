@@ -58,6 +58,7 @@ export class IncomeCreate {
 
     clearCategory() {
         this.newCategoryNameElement.value = ''; // Очищаем значение поля
+        location.href = '#/income';
     }
 
 }
