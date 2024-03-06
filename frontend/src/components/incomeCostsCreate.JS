@@ -13,7 +13,7 @@ export class IncomeCostsCreate {
         this.commentInput;
         this.formattedDate;
         this.typeOptions;
-
+        this.getCategoriesEndpointHost = '';
         this.renderSelects();
         this.handleOperationCreationClick();
     }
@@ -29,12 +29,12 @@ export class IncomeCostsCreate {
         if (this.routeParams.idIncome === 'create-income-btn') {
             this.typeOptions = ['Доход'];
             this.selectedType = 'income';
-            this.getCategoriesEndpoint = '/categories/income';
+            this.getCategoriesEndpointHost = '/categories/income';
             this.showHideTitleElements(true, false);
         } else if (this.routeParams.idCost === 'create-cost-btn') {
             this.typeOptions = ['Расход'];
             this.selectedType = 'expense';
-            this.getCategoriesEndpoint = '/categories/expense';
+            this.getCategoriesEndpointHost = '/categories/expense';
             this.showHideTitleElements(false, true);
         } else {
             console.log('Ошибка в вариантах выбора "Тип"');
@@ -44,11 +44,11 @@ export class IncomeCostsCreate {
     async renderSelects() {
         const selectContainer = document.querySelector('.col-4');
         this.typeOptions = [];
-        let getCategoriesEndpointHost = '/categories/income';
+        // let getCategoriesEndpointHost = '/categories/income';
         this.defineTransactionType();
 
         try {
-            const result = await CustomHttp.request(config.host + getCategoriesEndpointHost);
+            const result = await CustomHttp.request(config.host + this.getCategoriesEndpointHost);
             if (result && !result.error) {
                 if (result.error) {
                     throw new Error(result.message)
@@ -161,7 +161,7 @@ export class IncomeCostsCreate {
             this.formattedDate = this.formatDate(this.dateInput);
 
             if (!this.selectedOptionId || this.amountInput === '' || this.dateInput === '' || this.commentInput === '') {
-                alert('Пожалуйста, заполните все поля перед созданием операции.');
+                alert('Пожалуйста, заполните все поля.');
                 return;
             } else {
                 this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.formattedDate, this.commentInput);

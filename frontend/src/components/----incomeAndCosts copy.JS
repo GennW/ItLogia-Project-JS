@@ -29,13 +29,13 @@ export class IncomeAndCosts {
         const wrapperContent = document.getElementById('content-table'); // Получение контейнера для таблицы
         const table = document.createElement('table'); // Создание элемента таблицы
         table.classList.add('table', 'text-center', 'fs-6'); // Добавление классов к таблице
-
+ 
         const thead = this.createTableHeader(); // Создание заголовка таблицы
         table.appendChild(thead); // Добавление заголовка к таблице
-
+ 
         const tbody = this.createTableBody(); // Создание тела таблицы
         table.appendChild(tbody); // Добавление тела к таблице
-
+ 
         wrapperContent.appendChild(table); // Добавление таблицы в контейнер
     }
 
@@ -78,8 +78,8 @@ export class IncomeAndCosts {
         });
         return row;
     }
-    //////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
     createIconCell(operationId) {
         const iconCell = document.createElement('td');
         const icoWrapper = document.createElement('div');
@@ -98,7 +98,7 @@ export class IncomeAndCosts {
     }
 
 
-
+    
     createIconLink(action, toggle, target, icon, operationId) {
         const link = document.createElement('a');
         link.classList.add('link-offset-2', 'link-', 'link-underline-opacity-0');
@@ -144,21 +144,13 @@ export class IncomeAndCosts {
         const deleteOperationButton = document.getElementById('delete-operation');
         if (action === 'Delete') {
             deleteOperationButton.onclick = () => {
-                console.log(operationId)
                 this.deleteOperation(operationId);
             };
         } else if (action === 'Edit') {
-            const operation = this.operations.find(op => op.id === operationId); // Находим операцию по идентификатору
-            const operationData = JSON.stringify(operation); // Преобразуем данные операции в JSON строку
-            // const encodedOperationData = encodeURIComponent(operationData); // Кодируем JSON строку для передачи через URL            
-            localStorage.setItem('operationData', operationData); // Сохраняем данные операции в localStorage
-            location.href = `#/incomeCostsEdit`; // Переходим на страницу редактирования
-            console.log(operation);
-            console.log(operationData);
-        
+            location.href = `#/incomeCostsEdit?id=${operationId}`;
         }
     }
-
+    
 
     btnCreateRedirectWithId() {
         const btnIncome = document.getElementById('create-income-btn');
