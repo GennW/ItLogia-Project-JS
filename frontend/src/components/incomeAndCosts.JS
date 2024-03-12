@@ -9,13 +9,24 @@ export class IncomeAndCosts {
     constructor() {
         this.routeParams = UrlManager.getQueryParams();
         this.operations = [];
+        this.buttons = {
+            FILTER_DAY: document.getElementById('btn-filter-day'),
+            FILTER_WEEK: document.getElementById('btn-filter-week'),
+            FILTER_MONTH: document.getElementById('btn-filter-month'),
+            FILTER_YEAR: document.getElementById('btn-filter-year'),
+            FILTER_ALL: document.getElementById('btn-filter-all'),
+            FILTER_INTERVAL: document.getElementById('btn-filter-interval')
+        };
+        this.getOperations('all'); 
         this.btnCreateRedirectWithId();
-        this.getOperations();
+        
+        // console.log(this.buttons.FILTER_ALL)
+        this.bntFilterOperations()
     }
 
-    async getOperations() {
+    async getOperations(period) {
         try {
-            const result = await CustomHttp.request(config.host + '/operations?period=all');
+            const result = await CustomHttp.request(config.host + `/operations?period=${period}`);
             if (result && !result.error) {
                 this.operations = result;
                 this.createTable();
@@ -144,7 +155,6 @@ export class IncomeAndCosts {
         const deleteOperationButton = document.getElementById('delete-operation');
         if (action === 'Delete') {
             deleteOperationButton.onclick = () => {
-                console.log(operationId)
                 this.deleteOperation(operationId);
             };
         } else if (action === 'Edit') {
@@ -153,9 +163,7 @@ export class IncomeAndCosts {
             // const encodedOperationData = encodeURIComponent(operationData); // Кодируем JSON строку для передачи через URL            
             localStorage.setItem('operationData', operationData); // Сохраняем данные операции в localStorage
             location.href = `#/incomeCostsEdit`; // Переходим на страницу редактирования
-            console.log(operation);
-            console.log(operationData);
-        
+
         }
     }
 
@@ -190,4 +198,24 @@ export class IncomeAndCosts {
     //     wrapperContent.innerHTML = ''; // Очищаем содержимое обертки перед обновлением
     //     this.createTable(); // Заново создаем таблицу с обновленными операциями
     // }
+
+    bntFilterOperations() {
+
+
+        // Назначение обработчиков для кнопок
+        this.buttons.FILTER_ALL.addEventListener('click', () => {
+            this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+            this.getOperations('all'); 
+        });
+
+        this.buttons.FILTER_DAY.addEventListener('click', () => {
+            this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+            this.getOperations('day');
+        });
+    }
+
+    clearTableWithOperations() {
+        const wrapperContent = document.getElementById('content-table');
+        wrapperContent.innerHTML = '';  // Очищаем содержимое обертки перед добавлением новой таблицы
+    }
 }
