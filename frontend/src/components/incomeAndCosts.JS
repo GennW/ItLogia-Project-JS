@@ -200,22 +200,63 @@ export class IncomeAndCosts {
     //     this.createTable(); // Заново создаем таблицу с обновленными операциями
     // }
 
+    // bntFilterOperations() {
+
+    //     // Назначение обработчиков для кнопок
+    //     this.buttons.FILTER_ALL.addEventListener('click', () => {
+    //         this.updateButtonClass('FILTER_ALL');
+    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+    //         this.getOperations('all'); 
+    //     });
+
+    //     this.buttons.FILTER_DAY.addEventListener('click', () => {
+    //         this.updateButtonClass('FILTER_DAY');
+    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+    //         this.getOperations('day');
+    //     });
+
+    //     this.buttons.FILTER_WEEK.addEventListener('click', () => {
+    //         this.updateButtonClass('FILTER_WEEK');
+    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+    //         this.getOperations('week');
+    //     });
+
+    //     this.buttons.FILTER_MONTH.addEventListener('click', () => {
+    //         this.updateButtonClass('FILTER_MONTH');
+    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+    //         this.getOperations('month');
+    //     });
+
+    //     this.buttons.FILTER_YEAR.addEventListener('click', () => {
+    //         this.updateButtonClass('FILTER_YEAR');
+    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
+    //         this.getOperations('year');
+    //     });
+    // }
     bntFilterOperations() {
-
-        // Назначение обработчиков для кнопок
-        this.buttons.FILTER_ALL.addEventListener('click', () => {
-            this.updateButtonClass('FILTER_ALL');
-            this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-            this.getOperations('all'); 
-        });
-
-        this.buttons.FILTER_DAY.addEventListener('click', () => {
-            this.updateButtonClass('FILTER_DAY');
-            this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-            this.getOperations('day');
-
-        });
+        // объект для хранения соответствия между идентификаторами кнопок и периодами
+        const periodHandlers = {
+            'FILTER_ALL': 'all',
+            'FILTER_DAY': 'day',
+            'FILTER_WEEK': 'week',
+            'FILTER_MONTH': 'month',
+            'FILTER_YEAR': 'year'
+        };
+    
+        // обработчики событий клика кнопкам в соответствии с периодами
+        for (const buttonId in periodHandlers) {
+            //  обработчик события клика для каждой кнопки
+            this.buttons[buttonId].addEventListener('click', () => {
+                // Вызываем функцию для обновления классов кнопок в зависимости от выбранной кнопки
+                this.updateButtonClass(buttonId);
+                // Очищаем содержимое контейнера таблицы перед обновлением
+                this.clearTableWithOperations();
+                // Получаем и отображаем операции в зависимости от выбранного периода
+                this.getOperations(periodHandlers[buttonId]);
+            });
+        }
     }
+    
 
     updateButtonClass(activeButton) {
         // Удаляем класс "active" у всех кнопок
