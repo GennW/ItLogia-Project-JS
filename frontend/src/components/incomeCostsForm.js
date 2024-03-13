@@ -16,6 +16,7 @@ export class incomeCostsForm {
         this.typeOptions;
         this.getCategoriesEndpointHost = '';
         this.renderSelects();
+        this.typeSelect = document.getElementById('select');
 
     }
 
@@ -31,12 +32,12 @@ export class incomeCostsForm {
 // определяем тип (доход или расход) на основе параметров URL страницы 
 // incomeCostsCreate где параметр передаем через url и данных  на странице incomeCostsEdit
 // в коротой параметр (тип операции) передаем через localstorage
-        if (this.routeParams.idIncome === 'create-income-btn' || this.routeParams.operationId) {
+        if (this.routeParams.idIncome === 'create-income-btn' || (this.routeParams.operationId && this.operation.type === 'income')) {
             this.typeOptions = ['Доход'];
             this.selectedType = 'income';
             this.getCategoriesEndpointHost = '/categories/income';
             this.showHideTitleElements(true, false);
-        } else if (this.routeParams.idCost === 'create-cost-btn' || this.routeParams.operationId) {
+        } else if (this.routeParams.idCost === 'create-cost-btn' || (this.routeParams.operationId && this.operation.type === 'expense')) {
             this.typeOptions = ['Расход'];
             this.selectedType = 'expense';
             this.getCategoriesEndpointHost = '/categories/expense';
@@ -78,20 +79,20 @@ export class incomeCostsForm {
     }
 
     createTypeSelect(selectContainer) {
-        const typeSelect = document.createElement('select');
-        typeSelect.id = 'type';
-        typeSelect.className = 'form-control mb-2 select-placeholder';
-        typeSelect.setAttribute('name', 'Тип');
-        typeSelect.style.color = 'black';
+        this.typeSelect = document.createElement('select');
+        this.typeSelect.id = 'type';
+        this.typeSelect.className = 'form-control mb-2 select-placeholder';
+        this.typeSelect.setAttribute('name', 'Тип');
+        this.typeSelect.style.color = 'black';
 
         this.typeOptions.forEach((option) => {
             const optionElement = document.createElement('option');
             optionElement.value = option;
             optionElement.textContent = option;
-            typeSelect.appendChild(optionElement);
+            this.typeSelect.appendChild(optionElement);
         });
 
-        selectContainer.appendChild(typeSelect);
+        selectContainer.appendChild(this.typeSelect);
     }
 
     createCategorySelect(selectContainer) {

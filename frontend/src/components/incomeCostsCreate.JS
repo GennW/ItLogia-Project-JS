@@ -6,28 +6,45 @@ import { CustomHttp } from "./services/custom-http.js";
 export class IncomeCostsCreate extends incomeCostsForm {
     constructor() {
         super();
-       
+
         this.handleOperationCreationClick();
     }
 
     handleOperationCreationClick() {
-        document.getElementById('btn-create-operation').addEventListener('click', () => {
-            const selectedCategory = document.getElementById('select');
-            const typeSelect = document.getElementById('type');
-            this.amountInput = document.getElementById('summ').value;
-            this.dateInput = document.querySelector('input[type="date"]').value;
-            this.commentInput = document.getElementById('comment').value;
-            this.selectedOptionId = Number(selectedCategory.options[selectedCategory.selectedIndex].id);
-            this.selectedType = typeSelect.options[typeSelect.selectedIndex].value === 'Доход' ? 'income' : 'expense';
+        const btnCreateOperation = document.getElementById('btn-create-operation');
+
+        btnCreateOperation.addEventListener('click', () => {
+            // проверяем наличие поля с типом категории
+            if (document.getElementById('select')) {
+                // если есть категории то кнопка активна
+                btnCreateOperation.classList.remove('disabled');
+
+                const selectedCategory = document.getElementById('select');
+                const typeSelect = document.getElementById('type');
+                console.log(typeSelect)
+                this.amountInput = document.getElementById('summ').value;
+                this.dateInput = document.querySelector('input[type="date"]').value;
+                this.commentInput = document.getElementById('comment').value;
+                this.selectedOptionId = Number(selectedCategory.options[selectedCategory.selectedIndex].id);
+                this.selectedType = typeSelect.options[typeSelect.selectedIndex].value === 'Доход' ? 'income' : 'expense';
 
 
-            if (!this.selectedOptionId || this.amountInput === '' || this.dateInput === '' || this.commentInput === '') {
-                alert('Пожалуйста, заполните все поля.');
-                return;
+                if (!this.selectedOptionId || this.amountInput === '' || this.dateInput === '' || this.commentInput === '') {
+                    alert('Пожалуйста, заполните все поля.');
+                    return;
+                } else {
+                    this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.dateInput, this.commentInput);
+
+                }
             } else {
-                this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.dateInput, this.commentInput);
+                // если нет категории то кнопка не активна
+                btnCreateOperation.classList.add('disabled');
+                alert(`Создайте категорию ${this.typeSelect.value}ов в разделе ${this.typeSelect.value}ы`);
             }
+
         });
+
+
     }
 
     async createOperation(selectedType, selectedOptionId, amountInput, dateInput, commentInput) {
