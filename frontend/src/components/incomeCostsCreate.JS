@@ -7,7 +7,6 @@ export class IncomeCostsCreate extends incomeCostsForm {
     constructor() {
         super();
        
-        this.formattedDate;
         this.handleOperationCreationClick();
     }
 
@@ -20,13 +19,13 @@ export class IncomeCostsCreate extends incomeCostsForm {
             this.commentInput = document.getElementById('comment').value;
             this.selectedOptionId = Number(selectedCategory.options[selectedCategory.selectedIndex].id);
             this.selectedType = typeSelect.options[typeSelect.selectedIndex].value === 'Доход' ? 'income' : 'expense';
-            this.formattedDate = this.formatDate(this.dateInput);
+
 
             if (!this.selectedOptionId || this.amountInput === '' || this.dateInput === '' || this.commentInput === '') {
                 alert('Пожалуйста, заполните все поля.');
                 return;
             } else {
-                this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.formattedDate, this.commentInput);
+                this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.dateInput, this.commentInput);
             }
         });
     }

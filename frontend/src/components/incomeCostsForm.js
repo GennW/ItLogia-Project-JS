@@ -16,6 +16,7 @@ export class incomeCostsForm {
         this.typeOptions;
         this.getCategoriesEndpointHost = '';
         this.renderSelects();
+
     }
 
     showHideTitleElements(incomeVisible, costVisible) {
@@ -30,12 +31,12 @@ export class incomeCostsForm {
 // определяем тип (доход или расход) на основе параметров URL страницы 
 // incomeCostsCreate где параметр передаем через url и данных  на странице incomeCostsEdit
 // в коротой параметр (тип операции) передаем через localstorage
-        if (this.routeParams.idIncome === 'create-income-btn' || this.operation.type === 'income') {
+        if (this.routeParams.idIncome === 'create-income-btn' || this.routeParams.operationId) {
             this.typeOptions = ['Доход'];
             this.selectedType = 'income';
             this.getCategoriesEndpointHost = '/categories/income';
             this.showHideTitleElements(true, false);
-        } else if (this.routeParams.idCost === 'create-cost-btn' || this.operation.type === 'expense') {
+        } else if (this.routeParams.idCost === 'create-cost-btn' || this.routeParams.operationId) {
             this.typeOptions = ['Расход'];
             this.selectedType = 'expense';
             this.getCategoriesEndpointHost = '/categories/expense';
@@ -69,7 +70,7 @@ export class incomeCostsForm {
         this.createCommentInput(selectContainer);
 
         if (!this.routeParams.idIncome && !this.routeParams.idCost) {
-            console.log(this.routeParams)
+            
             // вызываем фунцию заполнения полей из class IncomeCostsEdit extends incomeCostsForm
         this.fillFormFieldsFromOperation();
         }
@@ -146,6 +147,7 @@ export class incomeCostsForm {
         dateInput.setAttribute('type', 'date');
         dateInput.setAttribute('placeholder', 'Дата...');
         selectContainer.appendChild(dateInput);
+
     }
 
     createCommentInput(selectContainer) {
@@ -157,10 +159,11 @@ export class incomeCostsForm {
         selectContainer.appendChild(commentInput);
     }
 
-    formatDate(dateInput) {
-        const dateParts = dateInput.split('-');
-        return `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-    }
+    // formatDate(dateInput) {
+    //     const dateParts = dateInput.split('.');
+
+    //     return `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+    // }
 
 
 }

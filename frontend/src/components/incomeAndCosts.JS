@@ -80,7 +80,7 @@ export class IncomeAndCosts {
         return tbody;
     }
 
-    createTableRow(data, headerClass) {
+    createTableRow(data) {
         const row = document.createElement('tr');
         data.forEach(text => {
             const cell = document.createElement('td');
@@ -162,7 +162,7 @@ export class IncomeAndCosts {
             const operationData = JSON.stringify(operation); // Преобразуем данные операции в JSON строку
             // const encodedOperationData = encodeURIComponent(operationData); // Кодируем JSON строку для передачи через URL            
             localStorage.setItem('operationData', operationData); // Сохраняем данные операции в localStorage
-            location.href = `#/incomeCostsEdit`; // Переходим на страницу редактирования
+            location.href = `#/incomeCostsEdit?operationId=${operation.id}`; // Переходим на страницу редактирования с передачей operationId в URL
 
         }
     }
@@ -171,6 +171,7 @@ export class IncomeAndCosts {
     btnCreateRedirectWithId() {
         const btnIncome = document.getElementById('create-income-btn');
         const btnCost = document.getElementById('create-cost-btn');
+        
         if (btnIncome) {
             btnIncome.addEventListener('click', function () {
                 localStorage.setItem('incomeId', btnIncome.id); // Устанавливаем значение id в локальное хранилище
@@ -201,17 +202,28 @@ export class IncomeAndCosts {
 
     bntFilterOperations() {
 
-
         // Назначение обработчиков для кнопок
         this.buttons.FILTER_ALL.addEventListener('click', () => {
+            this.updateButtonClass('FILTER_ALL');
             this.clearTableWithOperations(); // Очищаем пердыдущий запрос
             this.getOperations('all'); 
         });
 
         this.buttons.FILTER_DAY.addEventListener('click', () => {
+            this.updateButtonClass('FILTER_DAY');
             this.clearTableWithOperations(); // Очищаем пердыдущий запрос
             this.getOperations('day');
+
         });
+    }
+
+    updateButtonClass(activeButton) {
+        // Удаляем класс "active" у всех кнопок
+        Object.values(this.buttons).forEach(button => {
+            button.classList.remove('active');
+        });
+        // Добавляем класс "active" только к выбранной кнопке
+        this.buttons[activeButton].classList.add('active');
     }
 
     clearTableWithOperations() {

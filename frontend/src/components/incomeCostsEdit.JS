@@ -8,8 +8,8 @@ import { CustomHttp } from "./services/custom-http.js";
 export class IncomeCostsEdit extends incomeCostsForm {
     constructor() {
         super();
-
-        // console.log(this.operation.amount)
+        this.routeParams = UrlManager.getQueryParams();
+        console.log('routeParams.operationId',this.routeParams.operationId)
 
 
         // меняем заголовок "Редактирование дохода(расхода)"
@@ -44,11 +44,13 @@ export class IncomeCostsEdit extends incomeCostsForm {
 
         // Устанавливаем значение категории
         selectElement.value = this.operation.category;
+        console.log('dateInput.value===', dateInput.value)
+
 
     }
 
     handleOperationCreationClick() {
-        console.log(document.getElementById('btn-create-operation'))
+        
         document.getElementById('btn-create-operation').addEventListener('click', () => {
             const selectedCategory = document.getElementById('select');
             const typeSelect = document.getElementById('type');
@@ -57,25 +59,25 @@ export class IncomeCostsEdit extends incomeCostsForm {
             this.commentInput = document.getElementById('comment').value;
             this.selectedOptionId = Number(selectedCategory.options[selectedCategory.selectedIndex].id);
             this.selectedType = typeSelect.options[typeSelect.selectedIndex].value === 'Доход' ? 'income' : 'expense';
-            this.formattedDate = this.formatDate(this.dateInput);
+            // this.formattedDate = this.formatDate(this.dateInput);
             
 
             if (!this.selectedOptionId || this.amountInput === '' || this.dateInput === '' || this.commentInput === '') {
                 alert('Пожалуйста, заполните все поля.');
                 return;
             } else {
-                this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.formattedDate, this.commentInput);
+                this.createOperation(this.selectedType, this.selectedOptionId, this.amountInput, this.dateInput, this.commentInput);
             }
         });
     }
 
-    async createOperation(selectedType, selectedOptionId, amountInput, formattedDate, commentInput) {
+    async createOperation(selectedType, selectedOptionId, amountInput, dateInput, commentInput) {
         
         try {
             const createOperation = await CustomHttp.request(config.host + '/operations/' + this.operation.id, 'PUT', {
                 type: selectedType,
                 amount: amountInput,
-                date: formattedDate,
+                date: dateInput,
                 comment: commentInput,
                 category_id: selectedOptionId
             });
