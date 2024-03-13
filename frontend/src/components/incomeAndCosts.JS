@@ -17,11 +17,14 @@ export class IncomeAndCosts {
             FILTER_ALL: document.getElementById('btn-filter-all'),
             FILTER_INTERVAL: document.getElementById('btn-filter-interval')
         };
-        this.getOperations('all'); 
+        this.init();
+    }
+
+    init() {
+        this.getOperations('all');
         this.btnCreateRedirectWithId();
-        
-        // console.log(this.buttons.FILTER_ALL)
-        this.bntFilterOperations()
+        this.setDefaultActiveButton();
+        this.bntFilterOperations();
     }
 
     async getOperations(period) {
@@ -171,7 +174,7 @@ export class IncomeAndCosts {
     btnCreateRedirectWithId() {
         const btnIncome = document.getElementById('create-income-btn');
         const btnCost = document.getElementById('create-cost-btn');
-        
+
         if (btnIncome) {
             btnIncome.addEventListener('click', function () {
                 localStorage.setItem('incomeId', btnIncome.id); // Устанавливаем значение id в локальное хранилище
@@ -193,12 +196,6 @@ export class IncomeAndCosts {
         deleteOperationButton.setAttribute('data-id', id); // Устанавливаем data-id для кнопки "удалить" в модальном окне, чтобы иметь доступ к идентификатору категории при подтверждении удаления
     }
 
-    // обновления таблицы после удаления операции дохода или расхода
-    // updateTable() {
-    //     const wrapperContent = document.getElementById('content-table');
-    //     wrapperContent.innerHTML = ''; // Очищаем содержимое обертки перед обновлением
-    //     this.createTable(); // Заново создаем таблицу с обновленными операциями
-    // }
 
     // bntFilterOperations() {
 
@@ -242,10 +239,10 @@ export class IncomeAndCosts {
             'FILTER_MONTH': 'month',
             'FILTER_YEAR': 'year'
         };
-    
+
         // обработчики событий клика кнопкам в соответствии с периодами
         for (const buttonId in periodHandlers) {
-            //  обработчик события клика для каждой кнопки
+            // Добавляем обработчик события клика для каждой кнопки
             this.buttons[buttonId].addEventListener('click', () => {
                 // Вызываем функцию для обновления классов кнопок в зависимости от выбранной кнопки
                 this.updateButtonClass(buttonId);
@@ -256,7 +253,7 @@ export class IncomeAndCosts {
             });
         }
     }
-    
+
 
     updateButtonClass(activeButton) {
         // Удаляем класс "active" у всех кнопок
@@ -270,5 +267,22 @@ export class IncomeAndCosts {
     clearTableWithOperations() {
         const wrapperContent = document.getElementById('content-table');
         wrapperContent.innerHTML = '';  // Очищаем содержимое обертки перед добавлением новой таблицы
+    }
+
+    // Метод для установки кнопки "Все" по умолчанию
+    setDefaultActiveButton() {
+        const activeButton = this.getActiveButton();
+        if (!activeButton) {
+            this.buttons.FILTER_ALL.classList.add('active');
+        }
+    }
+
+    getActiveButton() {
+        for (const buttonId in this.buttons) {
+            if (this.buttons[buttonId].classList.contains('active')) {
+                return this.buttons[buttonId]; // Возвращаем активную кнопку
+            }
+        }
+        return null; // Если нет активной кнопки, возвращаем null
     }
 }
