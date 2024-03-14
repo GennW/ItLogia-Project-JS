@@ -34,6 +34,7 @@ export class IncomeAndCosts {
             const result = await CustomHttp.request(config.host + `/operations?period=${period}`);
             if (result && !result.error) {
                 this.operations = result;
+
                 this.createTable();
             }
         } catch (error) {
@@ -66,20 +67,25 @@ export class IncomeAndCosts {
     createTableBody() {
         const tbody = document.createElement('tbody'); // Создание элемента тела таблицы
 
-        this.operations.forEach((data, index) => { // Перебор операций для создания строк таблицы
+        let rowNum = 1; // Начинаем нумерацию с 1
+        this.operations.forEach((data) => { // Перебор операций для создания строк таблицы
             //массив данных для каждой строки в таблице операций, где каждый элемент массива представляет определенный столбец в таблице
-            const cellData = [
-                index + 1,
-                data.type === 'expense' ? 'Расходы' : 'Доходы', //Если тип равен 'expense', в ячейке будет отображаться 'Расходы', иначе 'Доходы'.
-                data.category,
-                data.amount,
-                data.date,
-                data.comment
-            ];
-            const row = this.createTableRow(cellData);
-            const iconCell = this.createIconCell(data.id);
-            row.appendChild(iconCell);
-            tbody.appendChild(row);
+            console.log(data.category)
+            if (data.category !== undefined) { // Проверка наличия значения в колонке "Категория"
+                const cellData = [
+                    rowNum,
+                    data.type === 'expense' ? 'Расходы' : 'Доходы', //Если тип равен 'expense', в ячейке будет отображаться 'Расходы', иначе 'Доходы'.
+                    data.category,
+                    data.amount,
+                    data.date,
+                    data.comment
+                ];
+                const row = this.createTableRow(cellData);
+                const iconCell = this.createIconCell(data.id);
+                row.appendChild(iconCell);
+                tbody.appendChild(row);
+                rowNum++;  // Увеличиваем номер строки для следующей итерации
+            }
         });
 
         return tbody;
@@ -94,8 +100,7 @@ export class IncomeAndCosts {
         });
         return row;
     }
-    //////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////
+
     createIconCell(operationId) {
         const iconCell = document.createElement('td');
         const icoWrapper = document.createElement('div');
@@ -199,39 +204,6 @@ export class IncomeAndCosts {
     }
 
 
-    // bntFilterOperations() {
-
-    //     // Назначение обработчиков для кнопок
-    //     this.buttons.FILTER_ALL.addEventListener('click', () => {
-    //         this.updateButtonClass('FILTER_ALL');
-    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-    //         this.getOperations('all'); 
-    //     });
-
-    //     this.buttons.FILTER_DAY.addEventListener('click', () => {
-    //         this.updateButtonClass('FILTER_DAY');
-    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-    //         this.getOperations('day');
-    //     });
-
-    //     this.buttons.FILTER_WEEK.addEventListener('click', () => {
-    //         this.updateButtonClass('FILTER_WEEK');
-    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-    //         this.getOperations('week');
-    //     });
-
-    //     this.buttons.FILTER_MONTH.addEventListener('click', () => {
-    //         this.updateButtonClass('FILTER_MONTH');
-    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-    //         this.getOperations('month');
-    //     });
-
-    //     this.buttons.FILTER_YEAR.addEventListener('click', () => {
-    //         this.updateButtonClass('FILTER_YEAR');
-    //         this.clearTableWithOperations(); // Очищаем пердыдущий запрос
-    //         this.getOperations('year');
-    //     });
-    // }
     bntFilterOperations() {
         // объект для хранения соответствия между идентификаторами кнопок и периодами
         const periodHandlers = {
@@ -257,9 +229,7 @@ export class IncomeAndCosts {
         }
     }
 
-    // ================
-
-
+    // обработка выбора даты начала и конца интервала
     handleIntervalFilter() {
         // Получаем элементы для выбора дат "От" и "До" интервала
         const dateFrom = document.getElementById('startDate');
@@ -269,12 +239,30 @@ export class IncomeAndCosts {
         const handleIntervalChange = () => {
             this.getOperationsWithInterval(period, dateFrom.value, dateTo.value);
         };
-         // Добавляем обработчики событий для изменения даты "От" и "До" интервала
-         dateTo.addEventListener('change', handleIntervalChange);
-         dateFrom.addEventListener('change', handleIntervalChange);
+
+        // обработчик при клике на даты без выбора фильтра интервал
+        const handleFilterIntervalClick = () => {
+
+            if (dateFrom.value !== '' && dateTo.value !== '') { // Проверяем, заполнены ли оба поля даты
+                this.updateButtonClass('FILTER_INTERVAL'); // Обновляем класс кнопки "Интервал" для отображения активного состояния
+                this.getOperationsWithInterval(period, dateFrom.value, dateTo.value); // Вызываем метод для получения операций с учетом выбранного интервала
+            } else {
+                console.log('Подалуйста заполните оба поля дат.');
+            }
+        };
+        // Добавляем обработчики событий для изменения даты "От" и "До" интервала
+        dateTo.addEventListener('change', handleIntervalChange);
+        dateFrom.addEventListener('change', handleIntervalChange);
+
+        // Добавляем обработчик события клика на кнопку "Интервал" при изменении значений дат
+        dateTo.addEventListener('change', handleFilterIntervalClick);
+        dateFrom.addEventListener('change', handleFilterIntervalClick);
+        // Добавляем обработчик события клика на кнопку "Интервал" при изменении значений дат
+        this.buttons.FILTER_INTERVAL.addEventListener('click', handleFilterIntervalClick);
     }
 
     async getOperationsWithInterval(period, dateFrom, dateTo) {
+
         try {
             const result = await CustomHttp.request(config.host + `/operations?period=${period}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
             if (result && !result.error) {
@@ -287,48 +275,6 @@ export class IncomeAndCosts {
         }
     }
 
-
-    // ==================
-
-
-    // начало: обработка выбора даты начала и конца интервала
-    // addIntervalFilterHandler() {
-    //     const startDateInput = document.getElementById('startDate');
-    //     const endDateInput = document.getElementById('endDate');
-
-    //     startDateInput.addEventListener('change', () => {
-    //         this.handleDateSelection(startDateInput, endDateInput);
-    //     });
-
-    //     endDateInput.addEventListener('change', () => {
-    //         this.handleDateSelection(startDateInput, endDateInput);
-    //     });
-    // }
-
-    // handleDateSelection(startDateInput, endDateInput) {
-    //     if (startDateInput.value !== '' && endDateInput.value !== '') {
-    //         // Получаем даты начала и конца интервала
-    //         const startDate = startDateInput.value;
-    //         const endDate = endDateInput.value;
-    //         // Вызываем метод для обработки фильтрации данных по интервалу
-    //         this.handleIntervalFilter(startDate, endDate);
-    //     }
-    // }
-
-    // async handleIntervalFilter(startDate, endDate) {
-    //     // Выполняем запрос на сервер для получения операций с учетом выбранного интервала
-    //     try {
-    //         const result = await CustomHttp.request(config.host + `/operations?period=interval&dateFrom=${startDate}&dateTo=${endDate}`);
-    //         if (result && !result.error) {
-    //             this.operations = result;
-    //             this.clearTableWithOperations();
-    //             this.createTable(); // Обновляем таблицу с полученными операциями
-    //         }
-    //     } catch (error) {
-    //         console.error('Ошибка при получении операций за интервал:', error);
-    //     }
-    // }
-    // конец обработки выбора даты начала и конца интервала    
 
     updateButtonClass(activeButton) {
         // Удаляем класс "active" у всех кнопок
@@ -360,19 +306,4 @@ export class IncomeAndCosts {
         }
         return null; // Если нет активной кнопки, возвращаем null
     }
-
-
-    // метод для выбора дат из фильтра за период
-    // handleDateSelection(event) {
-    //     const input = event.target;
-
-    //     if (input.value !== '') {
-    //         input.classList.add('has-value');
-    //     } else {
-    //         input.classList.remove('has-value');
-    //     }
-    //     document.getElementById('startDate').addEventListener('change', handleDateSelection);
-    //     document.getElementById('endDate').addEventListener('change', handleDateSelection);
-    // }
-
 }
