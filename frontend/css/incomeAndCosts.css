@@ -15,5 +15,68 @@
 .btn-wrapper .btn {
     width: 100px;
     height: 37px;
-    
 }
+
+
+/* стили для выбора дат в фильтре при выборе интервала  */
+input[type="date"] {
+    position: relative;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    color: transparent;
+    background: transparent;
+  }
+  
+  input[type="date"]::-webkit-inner-spin-button,
+  input[type="date"]::-webkit-clear-button {
+    z-index: -10;
+  }
+  
+  input[type="date"]::-webkit-input-placeholder {
+    z-index: 99;
+  }
+  
+  input[type="date"]:placeholder {
+    z-index: 99;
+  }
+  input[type="date"]:not(.has-value):before {
+    /* content: attr(placeholder); */
+    width: 100%;
+  }
+  
+  input[type="date"] {
+    /* padding: 12px 20px; */
+  }
+  
+  /*--SECOND--*/
+  .pa__top-title {
+    margin-bottom: 20px;
+    color: #455582;
+    font: 14px "Gilroy-Extrabold", sans-serif;
+
+  }
+  .pa__middle-range {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .pa__middle-item {
+    margin-right: 10px;
+  }
+  .pa__top-sec input[type="date"] {
+    border: 0;
+    color: #99a2ba;
+    font-size: 14px;
+  }
+

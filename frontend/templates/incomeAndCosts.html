@@ -134,11 +134,18 @@
                     <button id="btn-filter-interval" type="button" class="btn btn-outline-dark">Интервал</button>
                 </div>
                 <div class="main-change-date d-flex align-items-center ms-3">
-                    <span class="me-3">с</span>
-                    <a class="main-calendar me-3" href="javascript:void(0)">Дата</a>
-                    <span class="me-3">по</span>
-                    <a class="main-calendar" href="javascript:void(0)">Дата</a>
+                    <form class="pa__top-sec">
+                        <div class="pa__middle-range">
+                            <span class="me-3">с</span>
+                            <div class="pa__middle-item"><input id="startDate" class="pa__middle-input text" type="date"
+                                    name="date" placeholder="Дата" required></div>
+                            <span class="me-3">по</span>
+                            <div class="pa__middle-item"><input id="endDate" class="pa__middle-input text" type="date"
+                                    name="date" placeholder="Дата" required></div>
+                        </div>
+                    </form>
                 </div>
+
             </div>
             <div id="content-table">
                 <!-- <table class="table text-center fs-6">

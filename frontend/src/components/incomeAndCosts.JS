@@ -18,6 +18,7 @@ export class IncomeAndCosts {
             FILTER_INTERVAL: document.getElementById('btn-filter-interval')
         };
         this.init();
+
     }
 
     init() {
@@ -25,6 +26,7 @@ export class IncomeAndCosts {
         this.btnCreateRedirectWithId();
         this.setDefaultActiveButton();
         this.bntFilterOperations();
+        this.handleIntervalFilter();
     }
 
     async getOperations(period) {
@@ -237,7 +239,8 @@ export class IncomeAndCosts {
             'FILTER_DAY': 'day',
             'FILTER_WEEK': 'week',
             'FILTER_MONTH': 'month',
-            'FILTER_YEAR': 'year'
+            'FILTER_YEAR': 'year',
+            'FILTER_INTERVAL': 'interval'
         };
 
         // обработчики событий клика кнопкам в соответствии с периодами
@@ -254,6 +257,78 @@ export class IncomeAndCosts {
         }
     }
 
+    // ================
+
+
+    handleIntervalFilter() {
+        // Получаем элементы для выбора дат "От" и "До" интервала
+        const dateFrom = document.getElementById('startDate');
+        const dateTo = document.getElementById('endDate');
+        const period = 'interval';  // Устанавливаем период для запроса
+
+        const handleIntervalChange = () => {
+            this.getOperationsWithInterval(period, dateFrom.value, dateTo.value);
+        };
+         // Добавляем обработчики событий для изменения даты "От" и "До" интервала
+         dateTo.addEventListener('change', handleIntervalChange);
+         dateFrom.addEventListener('change', handleIntervalChange);
+    }
+
+    async getOperationsWithInterval(period, dateFrom, dateTo) {
+        try {
+            const result = await CustomHttp.request(config.host + `/operations?period=${period}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
+            if (result && !result.error) {
+                this.operations = result;
+                this.clearTableWithOperations();
+                this.createTable();
+            }
+        } catch (error) {
+            console.error('Ошибка при получении операций за интервал:', error);
+        }
+    }
+
+
+    // ==================
+
+
+    // начало: обработка выбора даты начала и конца интервала
+    // addIntervalFilterHandler() {
+    //     const startDateInput = document.getElementById('startDate');
+    //     const endDateInput = document.getElementById('endDate');
+
+    //     startDateInput.addEventListener('change', () => {
+    //         this.handleDateSelection(startDateInput, endDateInput);
+    //     });
+
+    //     endDateInput.addEventListener('change', () => {
+    //         this.handleDateSelection(startDateInput, endDateInput);
+    //     });
+    // }
+
+    // handleDateSelection(startDateInput, endDateInput) {
+    //     if (startDateInput.value !== '' && endDateInput.value !== '') {
+    //         // Получаем даты начала и конца интервала
+    //         const startDate = startDateInput.value;
+    //         const endDate = endDateInput.value;
+    //         // Вызываем метод для обработки фильтрации данных по интервалу
+    //         this.handleIntervalFilter(startDate, endDate);
+    //     }
+    // }
+
+    // async handleIntervalFilter(startDate, endDate) {
+    //     // Выполняем запрос на сервер для получения операций с учетом выбранного интервала
+    //     try {
+    //         const result = await CustomHttp.request(config.host + `/operations?period=interval&dateFrom=${startDate}&dateTo=${endDate}`);
+    //         if (result && !result.error) {
+    //             this.operations = result;
+    //             this.clearTableWithOperations();
+    //             this.createTable(); // Обновляем таблицу с полученными операциями
+    //         }
+    //     } catch (error) {
+    //         console.error('Ошибка при получении операций за интервал:', error);
+    //     }
+    // }
+    // конец обработки выбора даты начала и конца интервала    
 
     updateButtonClass(activeButton) {
         // Удаляем класс "active" у всех кнопок
@@ -285,4 +360,19 @@ export class IncomeAndCosts {
         }
         return null; // Если нет активной кнопки, возвращаем null
     }
+
+
+    // метод для выбора дат из фильтра за период
+    // handleDateSelection(event) {
+    //     const input = event.target;
+
+    //     if (input.value !== '') {
+    //         input.classList.add('has-value');
+    //     } else {
+    //         input.classList.remove('has-value');
+    //     }
+    //     document.getElementById('startDate').addEventListener('change', handleDateSelection);
+    //     document.getElementById('endDate').addEventListener('change', handleDateSelection);
+    // }
+
 }

@@ -44,10 +44,6 @@ export class IncomeCostsEdit extends incomeCostsForm {
 
         // Устанавливаем значение категории
         selectElement.value = this.operation.category;
-
-        console.log('this.operation.category===', this.operation.type, this.selectedType, this.typeOptions)
-
-
     }
 
     handleOperationCreationClick() {
