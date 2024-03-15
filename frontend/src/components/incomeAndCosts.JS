@@ -1,4 +1,5 @@
 import config from "../../config/config.js";
+import { GetBalance } from "../../config/getBalance.js";
 import icons from "../../config/icons.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
@@ -8,7 +9,6 @@ import { CustomHttp } from "./services/custom-http.js";
 export class IncomeAndCosts {
     constructor() {
         this.routeParams = UrlManager.getQueryParams();
-        this.operations = [];
         this.buttons = {
             FILTER_DAY: document.getElementById('btn-filter-day'),
             FILTER_WEEK: document.getElementById('btn-filter-week'),
@@ -17,16 +17,26 @@ export class IncomeAndCosts {
             FILTER_ALL: document.getElementById('btn-filter-all'),
             FILTER_INTERVAL: document.getElementById('btn-filter-interval')
         };
+        this.operations = [];
         this.init();
-
     }
 
     init() {
-        this.getOperations('all');
-        this.btnCreateRedirectWithId();
-        this.setDefaultActiveButton();
-        this.bntFilterOperations();
-        this.handleIntervalFilter();
+        // чтобы в массив попали  данные операции перед вызовом getCommonBalance()
+        this.getOperations('all')
+            .then(() => {
+
+                this.btnCreateRedirectWithId();
+                this.setDefaultActiveButton();
+                this.bntFilterOperations();
+                this.handleIntervalFilter();
+                this.deleteOperationsWithUndefinedCategory();
+                // this.getCommonBalance();
+                GetBalance.getCommonBalance(this.operations); 
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке операций:', error);
+            });
     }
 
     async getOperations(period) {
@@ -63,29 +73,65 @@ export class IncomeAndCosts {
         thead.appendChild(headerRow); // Добавление строки заголовка к заголовку таблицы
         return thead; // Возврат заголовка таблицы
     }
+    // вариант если не удалять операции несуществующих категорий
+    // createTableBody() {
+    //     const tbody = document.createElement('tbody'); // Создание элемента тела таблицы
+
+    //     let rowNum = 1; // Начинаем нумерацию с 1
+    //     this.operations.forEach((data) => { // Перебор операций для создания строк таблицы
+    //         //массив данных для каждой строки в таблице операций, где каждый элемент массива представляет определенный столбец в таблице
+    //         if (data.category !== undefined) { // Проверка наличия значения в колонке "Категория"
+    //             const cellData = [
+    //                 rowNum,
+    //                 data.type === 'expense' ? 'Расходы' : 'Доходы', //Если тип равен 'expense', в ячейке будет отображаться 'Расходы', иначе 'Доходы'.
+    //                 data.category,
+    //                 data.amount,
+    //                 data.date,
+    //                 data.comment
+    //             ];
+    //             const row = this.createTableRow(cellData);
+    //             const iconCell = this.createIconCell(data.id);
+    //             row.appendChild(iconCell);
+    //             tbody.appendChild(row);
+    //             rowNum++;  // Увеличиваем номер строки для следующей итерации
+    //         }
+    //     });
+
+    //     return tbody;
+    // }
+    // удаление операций несущетвующих категрий из массива
+    deleteOperationsWithUndefinedCategory() {
+        // Создаем новый массив, в который добавляем только операции с существующими категориями
+        let newOperations = this.operations.filter(operation => operation.category !== undefined);
+
+        // Переназначаем this.operations на новый массив без операций с несуществующими категориями
+        this.operations = newOperations;
+
+        // Пересоздаем таблицу с использованием обновленного массива
+        this.clearTableWithOperations();
+        this.createTable();
+    }
+
+
+
 
     createTableBody() {
         const tbody = document.createElement('tbody'); // Создание элемента тела таблицы
 
-        let rowNum = 1; // Начинаем нумерацию с 1
-        this.operations.forEach((data) => { // Перебор операций для создания строк таблицы
+        this.operations.forEach((data, index) => { // Перебор операций для создания строк таблицы
             //массив данных для каждой строки в таблице операций, где каждый элемент массива представляет определенный столбец в таблице
-            console.log(data.category)
-            if (data.category !== undefined) { // Проверка наличия значения в колонке "Категория"
-                const cellData = [
-                    rowNum,
-                    data.type === 'expense' ? 'Расходы' : 'Доходы', //Если тип равен 'expense', в ячейке будет отображаться 'Расходы', иначе 'Доходы'.
-                    data.category,
-                    data.amount,
-                    data.date,
-                    data.comment
-                ];
-                const row = this.createTableRow(cellData);
-                const iconCell = this.createIconCell(data.id);
-                row.appendChild(iconCell);
-                tbody.appendChild(row);
-                rowNum++;  // Увеличиваем номер строки для следующей итерации
-            }
+            const cellData = [
+                index + 1,
+                data.type === 'expense' ? 'Расходы' : 'Доходы', //Если тип равен 'expense', в ячейке будет отображаться 'Расходы', иначе 'Доходы'.
+                data.category,
+                data.amount,
+                data.date,
+                data.comment
+            ];
+            const row = this.createTableRow(cellData);
+            const iconCell = this.createIconCell(data.id);
+            row.appendChild(iconCell);
+            tbody.appendChild(row);
         });
 
         return tbody;
@@ -306,4 +352,23 @@ export class IncomeAndCosts {
         }
         return null; // Если нет активной кнопки, возвращаем null
     }
+
+    // getCommonBalance() {
+    //     const balanceElement = document.getElementById('common-balance');
+    //     let totalIncome = 0;
+    //     let totalExpenses = 0;
+
+    //     this.operations.forEach(item => {
+    //         if (item.type === 'income') {
+    //             totalIncome += item.amount;
+    //         } else if (item.type === 'expense') {
+    //             totalExpenses += item.amount;
+    //         }
+    //     });
+
+    //     // Вычислить баланс
+    //     const balance = totalIncome - totalExpenses;
+    //     const formattedBalance = balance.toLocaleString();  // Применение форматирования разделителя разрядов
+    //     balanceElement.innerText = formattedBalance;
+    // }
 }
