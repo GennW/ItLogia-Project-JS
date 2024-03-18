@@ -114,7 +114,6 @@ console.log(dataId, element)
                     if (deletionResult.error) {
                         console.error('Ошибка при удалении категории:', deletionResult.error);
                     } else {
-                        
                         // Успешное удаление - переходим на новую страницу
                         location.href = '#/costs';
                     }

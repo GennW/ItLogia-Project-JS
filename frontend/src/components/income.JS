@@ -3,9 +3,9 @@ import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
 
 
-
 export class Income {
     constructor() {
+
         this.income = [];
         this.categotyDelete = null;
 

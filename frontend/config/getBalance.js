@@ -15,6 +15,6 @@ export class GetBalance {
         // Вычислить баланс
         const balance = totalIncome - totalExpenses;
         const formattedBalance = balance.toLocaleString();  // Применение форматирования разделителя разрядов
-        balanceElement.innerText = formattedBalance;
+        balanceElement.innerText = formattedBalance + '$';
     }
 }

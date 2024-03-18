@@ -11,6 +11,8 @@ import { IncomeCreate } from "./components/incomeCreate.JS";
 import { IncomeEdit } from "./components/incomeEdit.JS";
 import { Auth } from "./components/services/auth.js";
 import { Logout } from "./components/services/logout.js";
+import { HandleElementsSidebar } from "./components/services/handleElemensSidebar.js";
+import { Sidebar } from "./components/sidebar.js";
 
 export class Router {
     constructor() {
@@ -18,6 +20,8 @@ export class Router {
         this.stylesElement = document.getElementById('styles');
         this.additionalStyleElement = document.getElementById('additionalStyle');
         this.titleElement = document.getElementById('title');
+        this.sidebarElement = document.getElementById('sidebar');
+        this.layoutElement = document.getElementById('layout');
 
 
         this.routes = [
@@ -200,6 +204,17 @@ export class Router {
             return;
         }
 
+        // добавляем на нужную страницу сайдбар
+        if (!newRoute.isAuth) {
+            this.sidebarElement.style = 'display: none !important';
+            this.layoutElement.style = 'justify-content: center; padding: 0 20px'
+        } else {
+            this.sidebarElement.style = '';
+            this.layoutElement.style = '';
+            new HandleElementsSidebar();
+            new Sidebar();
+        }
+
         //24min + 1:41:50 Проект Quiz: часть 4
         this.contentElement.innerHTML =
             await fetch(newRoute.template)
@@ -225,14 +240,7 @@ export class Router {
                 this.additionalStyleElement.setAttribute('href', newRoute.additionalStyle);
             }
         }
-        // сокращенный код с добавлением дополнительного стиля
-        // // добавляем дополнительные стили
-        // this.additionalStyleElement.setAttribute('href', newRoute.additionalStyle || '');
-
-        // // Устанавливаем дополнительный стиль при переходе на страницу, которая его требует
-        // // и очищаем его при переходе на страницу, которой он не требуется
-        // this.additionalStyleElement.setAttribute('href', newRoute.additionalStyle && newRoute.additionalStyle.length > 0 ? newRoute.additionalStyle : '');
-
+       
         this.titleElement.innerText = newRoute.title;
 
         // обрабатываем данные пользователя  1:40:30 Проект Quiz: часть 4

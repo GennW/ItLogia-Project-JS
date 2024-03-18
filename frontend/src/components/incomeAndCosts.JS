@@ -1,5 +1,5 @@
 import config from "../../config/config.js";
-import { GetBalance } from "../../config/getBalance.js";
+// import { GetBalance } from "../../config/getBalance.js";
 import icons from "../../config/icons.js";
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
@@ -32,7 +32,7 @@ export class IncomeAndCosts {
                 this.handleIntervalFilter();
                 this.deleteOperationsWithUndefinedCategory();
                 // this.getCommonBalance();
-                GetBalance.getCommonBalance(this.operations); 
+                // GetBalance.getCommonBalance(this.operations); 
             })
             .catch(error => {
                 console.error('Ошибка при загрузке операций:', error);
@@ -293,7 +293,7 @@ export class IncomeAndCosts {
                 this.updateButtonClass('FILTER_INTERVAL'); // Обновляем класс кнопки "Интервал" для отображения активного состояния
                 this.getOperationsWithInterval(period, dateFrom.value, dateTo.value); // Вызываем метод для получения операций с учетом выбранного интервала
             } else {
-                console.log('Подалуйста заполните оба поля дат.');
+                console.log('Пожалуйста заполните оба поля дат.');
             }
         };
         // Добавляем обработчики событий для изменения даты "От" и "До" интервала

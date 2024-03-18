@@ -9,7 +9,6 @@ export class IncomeCostsEdit extends incomeCostsForm {
     constructor() {
         super();
         this.routeParams = UrlManager.getQueryParams();
-        console.log('routeParams.operationId',this.routeParams.operationId)
 
 
         // меняем заголовок "Редактирование дохода(расхода)"
@@ -28,7 +27,7 @@ export class IncomeCostsEdit extends incomeCostsForm {
     fillFormFieldsFromOperation() {
         const typeSelect = document.getElementById('type');
         const amountInput = document.getElementById('summ');
-        console.log(this.operation)
+        // console.log(this.operation)
         const dateInput = document.getElementById('date-input');
         const commentInput = document.getElementById('comment');
         const selectElement = document.getElementById('select');
