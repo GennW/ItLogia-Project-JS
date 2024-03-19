@@ -11,7 +11,6 @@ export class Sidebar {
         try {
             // Выполняем запрос на получение баланса
             const getBalance = await CustomHttp.request(config.host + '/balance');
-            console.log(getBalance)
             if (getBalance) {
                 if (getBalance.error) {
                     console.error('Ошибка при удалении категории:', getBalance.error);

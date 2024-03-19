@@ -2,46 +2,62 @@
 import { UrlManager } from "../utils/url-manager.js";
 import { CustomHttp } from "./services/custom-http.js";
 
-CustomHttp
+
 
 export class Diagram {
     // Конструктор класса, принимает идентификатор  и текст заголовка
     constructor(canvasId, titleText) {
-
+        this.operations = [];
         // Получаем контекст рисования 
         this.canvas = document.getElementById(canvasId).getContext('2d');
-        this.titleText = titleText; // Устанавливаем текст заголовка
+        this.titleText = titleText; // Устанавливаем текст заголовка    
+        this.getOperations('all');
 
-       
+
     }
 
 
+    async getOperations(period) {
+        try {
+            const result = await CustomHttp.request(config.host + `/operations?period=${period}`);
+            if (result && !result.error) {
+                this.operations = result;
+
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    }
+
+    static createDataCanvasIncome(operations) {
+
+        // Фильтруем операции по типу "income"
+        const incomeOperations = operations.filter(operation => operation.type === "income");
+
+        // Если нет операций типа "income", вернуть пустой объект
+        if (incomeOperations.length === 0) {
+            document.getElementById('no-income').innerText = 'Нет операций по доходам'
+            console.log('Нет операций по доходам');
+            return {};
+        }
 
 
-    // async init() {
-    //     try {
+        // Извлекаем данные для меток и значения из операций
+        const allOperations = incomeOperations.map(operation => operation.category);
+        console.log('allOperations', allOperations)
 
-    //         const result = await CustomHttp.request(config.host + '');
+        // Получаем уникальные категории
+        const categories = [...new Set(incomeOperations.map(operation => operation.category))];
 
-    //         if (result) {
-    //             if (!result.user) {
-    //                 throw new Error(result.message);
-    //             }
-    //             // что то делаем 57 минута Проект Quiz: часть 4
+        // Вычисляем суммы для каждой уникальной категории
+        const sumsByCategory = categories.map(category => incomeOperations.reduce((sum, operation) => {
+            return operation.category === category ? sum + operation.amount : sum;
+        }, 0));
 
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-
-    // Статический метод для создания данных для первой диаграммы
-    static createDataCanvas1() {
         return {
-            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'], // Метки секторов диаграммы
+            labels: categories, // Метки секторов диаграммы
             datasets: [{
-                data: [30, 40, 20, 15, 10], // Данные для каждого сектора
+                data: sumsByCategory,  // Суммы для каждой категории
                 backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'], // Цвета секторов
                 hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'] // Цвета при наведении
             }]
@@ -49,7 +65,7 @@ export class Diagram {
     }
 
     // Статический метод для создания данных для второй диаграммы
-    static createDataCanvas2() {
+    static createDataCanvasCosts() {
         return {
             labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'], // Метки секторов диаграммы
             datasets: [{
@@ -93,15 +109,18 @@ export class Diagram {
         });
     }
 
-    // Метод для создания диаграммы с данными из createDataCanvas1
-    createChartWithCanvas1() {
-        const dataCanvas1 = Diagram.createDataCanvas1(); // Создание данных для первой диаграммы
-        return this.createChart(dataCanvas1); // Создание и отображение диаграммы
+    // Метод для создания диаграммы с данными из createDataCanvasIncome
+    async createChartWithCanvasIncome() {
+        return this.getOperations('all').then(() => {
+            const dataCanvasIncome = Diagram.createDataCanvasIncome(this.operations); // Создание данных для первой диаграммы
+            return this.createChart(dataCanvasIncome); // Создание и отображение диаграммы
+        });
     }
 
-    // Метод для создания диаграммы с данными из createDataCanvas2
-    createChartWithCanvas2() {
-        const dataCanvas2 = Diagram.createDataCanvas2(); // Создание данных для второй диаграммы
-        return this.createChart(dataCanvas2); // Создание и отображение диаграммы
+
+    // Метод для создания диаграммы с данными из createDataCanvasCosts
+    createChartWithCanvasCosts() {
+        const dataCanvasCosts = Diagram.createDataCanvasCosts(); // Создание данных для второй диаграммы
+        return this.createChart(dataCanvasCosts); // Создание и отображение диаграммы
     }
 }

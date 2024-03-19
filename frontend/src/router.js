@@ -34,11 +34,11 @@ export class Router {
                 isAuth: true,
                 load: () => { // для скриптов под каждую страницу
 
-                    const diagram1 = new Diagram('myPieChart1', 'Доходы');
-                    diagram1.createChartWithCanvas1(); // Создает диаграмму с dataCanvas1
+                    const diagramIncome = new Diagram('myPieChartIncome', 'Доходы');
+                    diagramIncome.createChartWithCanvasIncome(); // Создает диаграмму с dataCanvas1
 
-                    const diagram2 = new Diagram('myPieChart2', 'Расходы');
-                    diagram2.createChartWithCanvas2(); // Создает диаграмму с dataCanvas2
+                    const diagramCosts = new Diagram('myPieChartCosts', 'Расходы');
+                    diagramCosts.createChartWithCanvasCosts(); // Создает диаграмму с dataCanvas2
 
                     new Logout();
                 }

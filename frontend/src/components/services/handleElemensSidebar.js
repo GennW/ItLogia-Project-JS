@@ -11,7 +11,6 @@ export class HandleElementsSidebar {
         if (this.mainSidebar && fillElementsInMainSidebar.length > 0) {
             fillElementsInMainSidebar.forEach(element => {
                 this.mainSidebar.addEventListener('click', () => {
-                    console.log(element)
                     element.setAttribute('fill', 'white');
                 });
             });
