@@ -32,7 +32,7 @@ export class Diagram {
     static createDataCanvasIncome(operations) {
 
         // Фильтруем операции по типу "income"
-        const incomeOperations = operations.filter(operation => operation.type === "income");
+        const incomeOperations = operations.filter(operation => operation.type === "income" && operation.category);
 
         // Если нет операций типа "income", вернуть пустой объект
         if (incomeOperations.length === 0) {
@@ -69,10 +69,13 @@ export class Diagram {
     static createDataCanvasCosts(operations) {
         console.log(operations)
         // Фильтруем операции по типу "expense"
-        const costsOperations = operations.filter(operation => operation.type === "expense");
+        const costsOperationsWithCategory = operations.filter(operation => operation === "expense" && operation.category);
+
+        console.log('costsOperations',costsOperationsWithCategory)
 
         // Если нет операций типа "expense", вернуть пустой объект
-        if (costsOperations.length === 0) {
+        if (costsOperationsWithCategory.length === 0) {
+            console.log(document.getElementById('no-costs'))
             document.getElementById('no-costs').innerText = 'Нет операций по расходам'
             console.log('Нет операций по расходам');
             return {};
@@ -80,10 +83,10 @@ export class Diagram {
 
 
         // Получаем уникальные категории
-        const categories = [...new Set(costsOperations.map(operation => operation.category))].filter(Boolean); // Исключаем undefined;
+        const categories = [...new Set(costsOperationsWithCategory.map(operation => operation.category))].filter(Boolean); // Исключаем undefined;
         console.log(categories)
         // Вычисляем суммы для каждой уникальной категории
-        const sumsByCategory = categories.map(category => costsOperations.reduce((sum, operation) => {
+        const sumsByCategory = categories.map(category => costsOperationsWithCategory.reduce((sum, operation) => {
             return operation.category === category ? sum + operation.amount : sum;
         }, 0));
 

@@ -41,7 +41,8 @@ export class IncomeAndCosts {
             const result = await CustomHttp.request(config.host + `/operations?period=${period}`);
             if (result && !result.error) {
                 this.operations = result;
-                
+                this.deleteOperationsWithUndefinedCategory();
+                this.clearTableWithOperations()
                 this.createTable();
             }
         } catch (error) {
