@@ -42,9 +42,8 @@ export class CustomHttp {
                         return null; // не будет парсинга json если на странице не найден токен в init() где передается для уатентификации CustomHttp.request 1:19
                     }
                 }
-
             }
-            // alert('Что-то пошло не так');
+            alert('Что-то пошло не так');
             throw new Error(response.message);
         }
         // console.log(response)

@@ -11,7 +11,7 @@ export class Diagram {
         // Получаем контекст рисования 
         this.canvas = document.getElementById(canvasId).getContext('2d');
         this.titleText = titleText; // Устанавливаем текст заголовка    
-        this.getOperations('all');
+        // this.getOperations('all');
 
 
     }
@@ -47,7 +47,7 @@ export class Diagram {
         console.log('allOperations', allOperations)
 
         // Получаем уникальные категории
-        const categories = [...new Set(incomeOperations.map(operation => operation.category))];
+        const categories = [...new Set(incomeOperations.map(operation => operation.category))].filter(Boolean); // Исключаем undefined если удалена категория со всеми операциями;
 
         // Вычисляем суммы для каждой уникальной категории
         const sumsByCategory = categories.map(category => incomeOperations.reduce((sum, operation) => {
@@ -58,18 +58,39 @@ export class Diagram {
             labels: categories, // Метки секторов диаграммы
             datasets: [{
                 data: sumsByCategory,  // Суммы для каждой категории
-                backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'], // Цвета секторов
-                hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'] // Цвета при наведении
+                backgroundColor: ['#FFC107', '#20C997','#FD7E14',  '#DC3545', '#0D6EFD'], // Цвета секторов
+                hoverBackgroundColor: ['#FFC107', '#20C997', '#FD7E14', '#DC3545', '#0D6EFD'] // Цвета при наведении
+                
             }]
         };
     }
 
     // Статический метод для создания данных для второй диаграммы
-    static createDataCanvasCosts() {
+    static createDataCanvasCosts(operations) {
+        console.log(operations)
+        // Фильтруем операции по типу "expense"
+        const costsOperations = operations.filter(operation => operation.type === "expense");
+
+        // Если нет операций типа "expense", вернуть пустой объект
+        if (costsOperations.length === 0) {
+            document.getElementById('no-costs').innerText = 'Нет операций по расходам'
+            console.log('Нет операций по расходам');
+            return {};
+        }
+
+
+        // Получаем уникальные категории
+        const categories = [...new Set(costsOperations.map(operation => operation.category))].filter(Boolean); // Исключаем undefined;
+        console.log(categories)
+        // Вычисляем суммы для каждой уникальной категории
+        const sumsByCategory = categories.map(category => costsOperations.reduce((sum, operation) => {
+            return operation.category === category ? sum + operation.amount : sum;
+        }, 0));
+
         return {
-            labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'], // Метки секторов диаграммы
+            labels: categories, // Метки секторов диаграммы
             datasets: [{
-                data: [5, 20, 40, 40, 30], // Данные для каждого сектора
+                data: sumsByCategory, // Данные для каждого сектора
                 backgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'], // Цвета секторов
                 hoverBackgroundColor: ['#DC3545', '#FD7E14', '#FFC107', '#20C997', '#0D6EFD'] // Цвета при наведении
             }]
@@ -91,7 +112,7 @@ export class Diagram {
                     title: {
                         display: true, // Показывать заголовок
                         padding: 10, // Отступ заголовка
-                        text: this.titleText, // Сам текст заголовка
+                        text: this.titleText, // текст заголовка
                         font: { family: 'Roboto', size: 28 } // Шрифт заголовка
                     },
                     legend: {
@@ -119,8 +140,10 @@ export class Diagram {
 
 
     // Метод для создания диаграммы с данными из createDataCanvasCosts
-    createChartWithCanvasCosts() {
-        const dataCanvasCosts = Diagram.createDataCanvasCosts(); // Создание данных для второй диаграммы
-        return this.createChart(dataCanvasCosts); // Создание и отображение диаграммы
+    async createChartWithCanvasCosts() {
+        return this.getOperations('all').then(() => {
+            const dataCanvasCosts = Diagram.createDataCanvasCosts(this.operations); // Создание данных для второй диаграммы
+            return this.createChart(dataCanvasCosts); // Создание и отображение диаграммы
+        });
     }
 }

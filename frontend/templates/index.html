@@ -1,20 +1,30 @@
 ﻿<div class="main">
     <div class="container mb-5">
         <h1>Главная</h1>
-        <div class="main-dates-wrapper">
+        <div class="main-dates-wrapper d-flex align-content-center mb-5">
             <div class="btn-wrapper">
-                <button type="button" class="mb-1 btn active btn-outline-dark">Сегодня</button>
-                <button type="button" class="mb-1 btn btn-outline-dark">Неделя</button>
-                <button type="button" class="mb-1 btn btn-outline-dark">Месяц</button>
-                <button type="button" class="mb-1 btn btn-outline-dark">Год</button>
-                <button type="button" class="mb-1 btn btn-outline-dark">Все</button>
-                <button type="button" class="mb-1 btn btn-outline-dark">Интервал</button>
+                <button id="btn-filter-day" type="button" class="btn btn-outline-dark me-2">Сегодня</button>
+                <button id="btn-filter-week" type="button" class="btn btn-outline-dark me-2">Неделя</button>
+                <button id="btn-filter-month" type="button" class="btn btn-outline-dark me-2">Месяц</button>
+                <button id="btn-filter-year" type="button" class="btn btn-outline-dark me-2">Год</button>
+                <button id="btn-filter-all" type="button" class="btn btn-outline-dark me-2">Все</button>
+                <button id="btn-filter-interval" type="button" class="btn btn-outline-dark">Интервал</button>
             </div>
-            <div class="main-change-date">
-                <span>с</span>
-                <a class="main-calendar" href="javascript:void(0)">Дата</a>
-                <span>по</span>
-                <a class="main-calendar" href="javascript:void(0)">Дата</a>
+            <div class="main-change-date d-flex align-items-center ms-3">
+                <form class="pa__top-sec">
+                    <div class="pa__middle-range">
+                        <span class="me-3">с</span>
+                        <div class="pa__middle-item">
+                            <input id="startDate" class="pa__middle-input text" type="date" name="date"
+                                placeholder="Дата" required>
+                        </div>
+                        <span class="me-3">по</span>
+                        <div class="pa__middle-item">
+                            <input id="endDate" class="pa__middle-input text" type="date" name="date" placeholder="Дата"
+                                required>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
