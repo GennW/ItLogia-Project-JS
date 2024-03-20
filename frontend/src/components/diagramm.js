@@ -30,9 +30,11 @@ export class Diagram {
     }
 
     static createDataCanvasIncome(operations) {
+        console.log('alloperations-in-Income',operations)
 
         // Фильтруем операции по типу "income"
         const incomeOperations = operations.filter(operation => operation.type === "income" && operation.category);
+        console.log('operations.category',operations.category)
 
         // Если нет операций типа "income", вернуть пустой объект
         if (incomeOperations.length === 0) {
@@ -43,11 +45,12 @@ export class Diagram {
 
 
         // Извлекаем данные для меток и значения из операций
-        const allOperations = incomeOperations.map(operation => operation.category);
-        console.log('allOperations', allOperations)
+        const categoryOperations = incomeOperations.map(operation => operation.category); // проверка на категорию в случае если она удалена то не будет выведена
+        console.log('categoryOperations', categoryOperations)
 
         // Получаем уникальные категории
         const categories = [...new Set(incomeOperations.map(operation => operation.category))].filter(Boolean); // Исключаем undefined если удалена категория со всеми операциями;
+        console.log('unik-categories-incomeOperations', categories)
 
         // Вычисляем суммы для каждой уникальной категории
         const sumsByCategory = categories.map(category => incomeOperations.reduce((sum, operation) => {
@@ -67,15 +70,14 @@ export class Diagram {
 
     // Статический метод для создания данных для второй диаграммы
     static createDataCanvasCosts(operations) {
-        console.log(operations)
+        console.log('alloperations-in-Costs',operations)
         // Фильтруем операции по типу "expense"
-        const costsOperationsWithCategory = operations.filter(operation => operation === "expense" && operation.category);
+        const costsOperationsWithCategory = operations.filter(operation => operation.type === "expense" && operation.category);
 
-        console.log('costsOperations',costsOperationsWithCategory)
+        console.log('costsOperationsWithCategory',costsOperationsWithCategory)
 
         // Если нет операций типа "expense", вернуть пустой объект
         if (costsOperationsWithCategory.length === 0) {
-            console.log(document.getElementById('no-costs'))
             document.getElementById('no-costs').innerText = 'Нет операций по расходам'
             console.log('Нет операций по расходам');
             return {};
