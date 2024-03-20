@@ -103,8 +103,9 @@ export class Income {
         newCategoryCardBody.classList.add('card-body', 'card-body-last', 'd-flex', 'align-items-center', 'justify-content-center');
         link.classList.add('link-secondary', 'link-offset-2', 'link-underline', 'link-underline-opacity-0');
         link.textContent = '+';
-        link.href = '#/incomeCreate';
-
+        newCategoryCardBody.addEventListener('click', () => {
+            location.hash = '#/incomeCreate'; // Добавить обработчик для перехода при клике
+        });
         newCategoryCardBody.appendChild(link);
         newCategoryCard.appendChild(newCategoryCardBody);
         container.appendChild(newCategoryCard);

@@ -44,7 +44,9 @@ body {
     cursor: not-allowed;
 }
 
-
+.inputs-size {
+    width: 75%;
+}
 .sidebar {
     width: 220px;
     /* height: 100vh; */

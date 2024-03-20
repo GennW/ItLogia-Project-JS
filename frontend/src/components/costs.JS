@@ -85,6 +85,10 @@ export class Costs {
     const newCategoryCardBody = this.createCard.createElement('div', ['card-body', 'card-body-last', 'd-flex', 'align-items-center', 'justify-content-center']); // Создаем содержимое для новой категории
     const link = this.createCard.createElement('a', ['link-secondary', 'link-offset-2', 'link-underline', 'link-underline-opacity-0'], '+', { href: '#/costsCreate' }); // Создаем ссылку для создания новой категории
 
+    newCategoryCardBody.addEventListener('click', () => {
+        location.hash = '#/costsCreate'; // Добавить обработчик для перехода при клике
+    });
+    
     newCategoryCardBody.appendChild(link); // Добавляем ссылку в содержимое карточки
     newCategoryCard.appendChild(newCategoryCardBody); // Добавляем содержимое карточки
     container.appendChild(newCategoryCard); // Добавляем карточку в контейнер
