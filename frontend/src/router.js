@@ -34,10 +34,10 @@ export class Router {
                 isAuth: true,
                 load: () => { // для скриптов под каждую страницу
 
-                    const diagramIncome = new Diagram('myPieChartIncome', 'Доходы');
+                    const diagramIncome = new Diagram('Доходы');
                     diagramIncome.createChartWithCanvasIncome(); // Создает диаграмму с dataCanvas1
 
-                    const diagramCosts = new Diagram('myPieChartCosts', 'Расходы');
+                    const diagramCosts = new Diagram('Расходы');
                     diagramCosts.createChartWithCanvasCosts(); // Создает диаграмму с dataCanvas2
 
                     new Logout();

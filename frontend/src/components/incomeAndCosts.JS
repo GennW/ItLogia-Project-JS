@@ -2,52 +2,43 @@ import config from "../../config/config.js";
 // import { GetBalance } from "../../config/getBalance.js";
 import icons from "../../config/icons.js";
 import { UrlManager } from "../utils/url-manager.js";
+import { FilterDate } from "./filterDate.js";
 import { CustomHttp } from "./services/custom-http.js";
 
 
 
-export class IncomeAndCosts {
+export class IncomeAndCosts extends FilterDate {
     constructor() {
+        super();
         this.routeParams = UrlManager.getQueryParams();
-        this.buttons = {
-            FILTER_DAY: document.getElementById('btn-filter-day'),
-            FILTER_WEEK: document.getElementById('btn-filter-week'),
-            FILTER_MONTH: document.getElementById('btn-filter-month'),
-            FILTER_YEAR: document.getElementById('btn-filter-year'),
-            FILTER_ALL: document.getElementById('btn-filter-all'),
-            FILTER_INTERVAL: document.getElementById('btn-filter-interval')
-        };
-        this.operations = [];
+
         this.init();
     }
 
-    init() {
-        // чтобы в массив попали  данные операции перед вызовом getCommonBalance()
-        this.getOperations('all')
-            .then(() => {
-                this.btnCreateRedirectWithId();
-                this.setDefaultActiveButton();
-                this.bntFilterOperations();
-                this.handleIntervalFilter();
-                this.deleteOperationsWithUndefinedCategory();
-            })
-            .catch(error => {
-                console.error('Ошибка при загрузке операций:', error);
-            });
+    async init() {
+        this.operations = [];
+
+        super.init();
+        this.btnCreateRedirectWithId();
+        this.deleteOperationsWithUndefinedCategory();
     }
 
+
     async getOperations(period) {
-        try {
-            const result = await CustomHttp.request(config.host + `/operations?period=${period}`);
-            if (result && !result.error) {
-                this.operations = result;
-                this.deleteOperationsWithUndefinedCategory();
-                this.clearTableWithOperations()
-                this.createTable();
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
+        await super.getOperations(period);
+
+        this.deleteOperationsWithUndefinedCategory();
+        this.clearTableWithOperations()
+        this.createTable();
+
+    }
+    
+
+    async getOperationsWithInterval(period, dateFrom, dateTo) {
+        await super.getOperationsWithInterval(period, dateFrom, dateTo);
+
+        this.clearTableWithOperations();
+        this.createTable();
     }
 
     createTable() {
@@ -73,24 +64,11 @@ export class IncomeAndCosts {
         thead.appendChild(headerRow); // Добавление строки заголовка к заголовку таблицы
         return thead; // Возврат заголовка таблицы
     }
-    
-    // удаление операций несущетвующих категрий из массива
-    deleteOperationsWithUndefinedCategory() {
-        // Создаем новый массив, в который добавляем только операции с существующими категориями
-        let newOperations = this.operations.filter(operation => operation.category !== undefined);
-
-        // Переназначаем this.operations на новый массив без операций с несуществующими категориями
-        this.operations = newOperations;
-
-        // Пересоздаем таблицу с использованием обновленного массива
-        this.clearTableWithOperations();
-        this.createTable();
-    }
 
 
     createTableBody() {
-        const tbody = document.createElement('tbody'); // Создание элемента тела таблицы
 
+        const tbody = document.createElement('tbody'); // Создание элемента тела таблицы
         this.operations.forEach((data, index) => { // Перебор операций для создания строк таблицы
             //массив данных для каждой строки в таблице операций, где каждый элемент массива представляет определенный столбец в таблице
             const cellData = [
@@ -220,108 +198,24 @@ export class IncomeAndCosts {
         deleteOperationButton.setAttribute('data-id', id); // Устанавливаем data-id для кнопки "удалить" в модальном окне, чтобы иметь доступ к идентификатору категории при подтверждении удаления
     }
 
+    // удаление операций несущетвующих категрий из массива
+    deleteOperationsWithUndefinedCategory() {
 
-    bntFilterOperations() {
-        // объект для хранения соответствия между идентификаторами кнопок и периодами
-        const periodHandlers = {
-            'FILTER_ALL': 'all',
-            'FILTER_DAY': 'day',
-            'FILTER_WEEK': 'week',
-            'FILTER_MONTH': 'month',
-            'FILTER_YEAR': 'year',
-            'FILTER_INTERVAL': 'interval'
-        };
+        // Создаем новый массив, в который добавляем только операции с существующими категориями
+        let newOperations = this.operations.filter(operation => operation.category !== undefined);
 
-        // обработчики событий клика кнопкам в соответствии с периодами
-        for (const buttonId in periodHandlers) {
-            // Добавляем обработчик события клика для каждой кнопки
-            this.buttons[buttonId].addEventListener('click', () => {
-                // Вызываем функцию для обновления классов кнопок в зависимости от выбранной кнопки
-                this.updateButtonClass(buttonId);
-                // Очищаем содержимое контейнера таблицы перед обновлением
-                this.clearTableWithOperations();
-                // Получаем и отображаем операции в зависимости от выбранного периода
-                this.getOperations(periodHandlers[buttonId]);
-            });
-        }
-    }
-
-    // обработка выбора даты начала и конца интервала
-    handleIntervalFilter() {
-        // Получаем элементы для выбора дат "От" и "До" интервала
-        const dateFrom = document.getElementById('startDate');
-        const dateTo = document.getElementById('endDate');
-        const period = 'interval';  // Устанавливаем период для запроса
-
-        const handleIntervalChange = () => {
-            this.getOperationsWithInterval(period, dateFrom.value, dateTo.value);
-        };
-
-        // обработчик при клике на даты без выбора фильтра интервал
-        const handleFilterIntervalClick = () => {
-
-            if (dateFrom.value !== '' && dateTo.value !== '') { // Проверяем, заполнены ли оба поля даты
-                this.updateButtonClass('FILTER_INTERVAL'); // Обновляем класс кнопки "Интервал" для отображения активного состояния
-                this.getOperationsWithInterval(period, dateFrom.value, dateTo.value); // Вызываем метод для получения операций с учетом выбранного интервала
-            } else {
-                console.log('Пожалуйста заполните оба поля дат.');
-            }
-        };
-        // Добавляем обработчики событий для изменения даты "От" и "До" интервала
-        dateTo.addEventListener('change', handleIntervalChange);
-        dateFrom.addEventListener('change', handleIntervalChange);
-
-        // Добавляем обработчик события клика на кнопку "Интервал" при изменении значений дат
-        dateTo.addEventListener('change', handleFilterIntervalClick);
-        dateFrom.addEventListener('change', handleFilterIntervalClick);
-        // Добавляем обработчик события клика на кнопку "Интервал" при изменении значений дат
-        this.buttons.FILTER_INTERVAL.addEventListener('click', handleFilterIntervalClick);
-    }
-
-    async getOperationsWithInterval(period, dateFrom, dateTo) {
-
-        try {
-            const result = await CustomHttp.request(config.host + `/operations?period=${period}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
-            if (result && !result.error) {
-                this.operations = result;
-                this.clearTableWithOperations();
-                this.createTable();
-            }
-        } catch (error) {
-            console.error('Ошибка при получении операций за интервал:', error);
-        }
-    }
+        // Переназначаем this.operations на новый массив без операций с несуществующими категориями
+        this.operations = newOperations;
 
 
-    updateButtonClass(activeButton) {
-        // Удаляем класс "active" у всех кнопок
-        Object.values(this.buttons).forEach(button => {
-            button.classList.remove('active');
-        });
-        // Добавляем класс "active" только к выбранной кнопке
-        this.buttons[activeButton].classList.add('active');
+        // Пересоздаем таблицу с использованием обновленного массива
+        this.clearTableWithOperations();
+        this.createTable();
     }
 
     clearTableWithOperations() {
         const wrapperContent = document.getElementById('content-table');
         wrapperContent.innerHTML = '';  // Очищаем содержимое обертки перед добавлением новой таблицы
-    }
-
-    // Метод для установки кнопки "Все" по умолчанию
-    setDefaultActiveButton() {
-        const activeButton = this.getActiveButton();
-        if (!activeButton) {
-            this.buttons.FILTER_ALL.classList.add('active');
-        }
-    }
-
-    getActiveButton() {
-        for (const buttonId in this.buttons) {
-            if (this.buttons[buttonId].classList.contains('active')) {
-                return this.buttons[buttonId]; // Возвращаем активную кнопку
-            }
-        }
-        return null; // Если нет активной кнопки, возвращаем null
     }
 
 }
