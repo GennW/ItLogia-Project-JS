@@ -6,6 +6,7 @@ export class Sidebar {
     constructor() {
         this.init();
     }
+
     async init() {
         const balanceElement = document.getElementById('common-balance');
         try {

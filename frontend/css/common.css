@@ -192,3 +192,8 @@ input[type="date"] {
     color: #99a2ba;
     font-size: 14px;
   }
+
+
+  .nav-link.active svg path {
+    fill: #fff;
+  }

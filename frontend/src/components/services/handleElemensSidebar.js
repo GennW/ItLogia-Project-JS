@@ -1,71 +1,54 @@
 export class HandleElementsSidebar {
     constructor() {
-        this.previousElement = null;
-        this.children = null;
+        // Инициализация предыдущего активного элемента
+        this.previousActiveElement = null;
+        // Массив объектов для хранения данных о элементах
+        this.sidebarElements = [
+            { element: document.getElementById('main-sidebar'), isActive: true },
+            { element: document.getElementById('income-costs-sidebar'), isActive: false },
+            { element: document.getElementById('income-sidebar'), isActive: false },
+            { element: document.getElementById('costs-sidebar'), isActive: false }
+        ];
 
-        this.incomeCostsSidebar = document.getElementById('income-costs-sidebar');
-        this.mainSidebar = document.getElementById('main-sidebar');
-        this.costsSidebar = document.getElementById('costs-sidebar');
-
-        const fillElementsInMainSidebar = this.mainSidebar.querySelectorAll('[fill="#052C65"]');
-        if (this.mainSidebar && fillElementsInMainSidebar.length > 0) {
-            fillElementsInMainSidebar.forEach(element => {
-                this.mainSidebar.addEventListener('click', () => {
-                    element.setAttribute('fill', 'white');
-                });
-            });
-        }
-
-        const fillElementsInIncomeCostsSidebar = this.incomeCostsSidebar.querySelectorAll('[fill="#052C65"]');
-        if (this.incomeCostsSidebar && fillElementsInIncomeCostsSidebar.length > 0) {
-            fillElementsInIncomeCostsSidebar.forEach(element => {
-                this.incomeCostsSidebar.addEventListener('click', () => {
-                    element.setAttribute('fill', 'white');
-                });
-            });
-        }
-
-        const incomeSidebar = document.getElementById('income-sidebar')
-        const logoElement = document.getElementById('logo');
-
-        logoElement.addEventListener('click', this.handleLogoClick.bind(this));
-        this.mainSidebar.addEventListener('click', this.handleButtonClicks.bind(this));
-        this.costsSidebar.addEventListener('click', this.handleButtonClicks.bind(this));
-        this.incomeCostsSidebar.addEventListener('click', this.handleButtonClicks.bind(this));
-        incomeSidebar.addEventListener('click', this.handleButtonClicks.bind(this));
-    }
-    handleLogoClick() {
-        // Вызвать ту же логику, что и в методе handleButtonClicks для mainSidebar
-        this.handleButtonClicks({ target: this.mainSidebar });
-        const fillElementsInMainSidebar = this.mainSidebar.querySelectorAll('[fill="#052C65"]');
-        fillElementsInMainSidebar.forEach(element => {
-            element.setAttribute('fill', 'white');
+        // Добавление обработчика кликов для каждого элемента
+        this.sidebarElements.forEach((sidebarItem) => {
+            sidebarItem.element.addEventListener('click', this.handleElementClick.bind(this, sidebarItem));
         });
-
-
     }
-    handleButtonClicks(event) {
+
+    // Обработчик кликов
+    handleElementClick(clickedItem, event) {
         const clickedElement = event.target;
 
-        if (this.previousElement && this.previousElement !== clickedElement) {
-            const paths = this.previousElement.querySelectorAll('path');
+        // Обновление состояния всех элементов и предыдущего активного элемента
+        this.sidebarElements.forEach((sidebarItem) => {
+            if (sidebarItem !== clickedItem && sidebarItem.isActive) {
+                sidebarItem.element.classList.add('link-dark');
+                sidebarItem.element.classList.remove('active');
+                sidebarItem.isActive = false;
+            }
+        });
 
-            paths.forEach(path => {
-                path.setAttribute('fill', '#052C65');
-            });
-
-            this.previousElement.classList.add('link-dark');
-            this.previousElement.classList.remove('active');
+        // Обновление состояния кликнутого элемента
+        if (!clickedItem.isActive) {
+            clickedItem.element.classList.remove('link-dark');
+            clickedItem.element.classList.add('active');
+            clickedItem.isActive = true;
+            this.previousActiveElement = clickedItem.element;
         }
 
-        // clickedElement.setAttribute('fill', 'white');
+        // Установка активного состояния для кликнутого элемента
         clickedElement.classList.remove('link-dark');
         clickedElement.classList.add('active');
-
-        this.previousElement = clickedElement;
     }
 
-    togleCollapsed() {
+    // Обработчик клика по логотипу
+    handleLogoClick() {
+        this.handleElementClick({ element: this.sidebarElements[0].element, isActive: true });
+    }
+
+    // Метод для сворачивания боковой панели
+    toggleSidebarCollapsed() {
         const currentURL = location.hash;
         const categorySidebar = document.getElementById('category-sidebar');
         if (currentURL !== '#/income' && currentURL !== '#/costs') {
@@ -75,3 +58,4 @@ export class HandleElementsSidebar {
         }
     }
 }
+

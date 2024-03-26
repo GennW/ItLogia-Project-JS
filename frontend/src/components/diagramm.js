@@ -5,56 +5,27 @@
 export class Diagram extends FilterDate {
 
     // Конструктор класса, принимает идентификатор  и текст заголовка
-    constructor(titleText) {
+    constructor() {
         super();
         this.operations = [];
         // Получаем контекст рисования 
         this.canvasIncome = document.getElementById('myPieChartIncome').getContext('2d');
         this.canvasCosts = document.getElementById('myPieChartCosts').getContext('2d');
-
-
-        this.titleText = titleText; 
-        this.init()
-
     }
 
-    async init() {
-        super.init();
-        // В вашем обработчике событий для кнопок, соответствующих разным периодам
-        this.buttons.FILTER_DAY.addEventListener('click', async () => {
-            await this.updateChartsByPeriod('day');
-        });
 
-        this.buttons.FILTER_WEEK.addEventListener('click', async () => {
-            await this.updateChartsByPeriod('week');
-        });
-
-        this.buttons.FILTER_MONTH.addEventListener('click', async () => {
-            await this.updateChartsByPeriod('month');
-        });
-
-        this.buttons.FILTER_YEAR.addEventListener('click', async () => {
-            await this.updateChartsByPeriod('year');
-        });
-
-        this.buttons.FILTER_ALL.addEventListener('click', async () => {
-            await this.updateChartsByPeriod('all');
-        });
-
-
-    }
 
     async getOperationsWithInterval(period, dateFrom, dateTo) {
         await super.getOperationsWithInterval(period, dateFrom, dateTo);
         this.removeExistingCharts(); // Удалить существующие диаграммы
         if (this.chartIncome) {
             this.chartIncome.destroy();
-            await this.updateChartsByPeriod();
+            // await this.updateChartsByPeriod();
             await this.createChartWithCanvasIncome();
         }
         if (this.chartCosts) {
             this.chartCosts.destroy();
-            await this.updateChartsByPeriod();
+            // await this.updateChartsByPeriod();
             await this.createChartWithCanvasCosts();
         }
         
@@ -63,11 +34,12 @@ export class Diagram extends FilterDate {
 
     async getOperations(period) {
         await super.getOperations(period);
+        this.createChartWithCanvasCosts();
+        this.createChartWithCanvasIncome();
     }
 
 
     static createDataCanvasIncome(operations) {
-        // console.log('alloperations-in-Income',operations)
 
         // Фильтруем операции по типу "income"
         const incomeOperations = operations.filter(operation => operation.type === "income" && operation.category);
@@ -110,11 +82,10 @@ export class Diagram extends FilterDate {
 
     // Статический метод для создания данных для второй диаграммы
     static createDataCanvasCosts(operations) {
-        // console.log('alloperations-in-Costs',operations)
+
         // Фильтруем операции по типу "expense"
         const costsOperationsWithCategory = operations.filter(operation => operation.type === "expense" && operation.category);
 
-        // console.log('costsOperationsWithCategory',costsOperationsWithCategory)
 
         // Если нет операций типа "expense", вернуть пустой объект
         if (costsOperationsWithCategory.length === 0) {
@@ -162,7 +133,7 @@ export class Diagram extends FilterDate {
                     title: {
                         display: true, // Показывать заголовок
                         padding: 10, // Отступ заголовка
-                        text: this.titleText, // текст заголовка
+                        text: 'Доходы', // текст заголовка
                         font: { family: 'Roboto', size: 28 } // Шрифт заголовка
                     },
                     legend: {
@@ -198,7 +169,7 @@ export class Diagram extends FilterDate {
                     title: {
                         display: true, // Показывать заголовок
                         padding: 10, // Отступ заголовка
-                        text: this.titleText, // текст заголовка
+                        text: 'Расходы', // текст заголовка
                         font: { family: 'Roboto', size: 28 } // Шрифт заголовка
                     },
                     legend: {
@@ -219,26 +190,26 @@ export class Diagram extends FilterDate {
 
     // Метод для создания диаграммы с данными из createDataCanvasIncome
     async createChartWithCanvasIncome() {
-        return this.getOperations('all').then(() => {
+
             if (this.chartIncome) {
                 this.chartIncome.destroy();  // Уничтожение существующей диаграммы расходов, если она существует
             }
 
             const dataCanvasIncome = Diagram.createDataCanvasIncome(this.operations); // Создание данных для первой диаграммы
             return this.createChartIncome(dataCanvasIncome); // Создание и отображение диаграммы
-        });
+       
     }
 
 
     // Метод для создания диаграммы с данными из createDataCanvasCosts
     async createChartWithCanvasCosts() {
-        return this.getOperations('all').then(() => {
+      
             if (this.chartCosts) {
                 this.chartCosts.destroy();  // Уничтожение существующей диаграммы расходов, если она существует
             }
             const dataCanvasCosts = Diagram.createDataCanvasCosts(this.operations); // Создание данных для второй диаграммы
             return this.createChartCosts(dataCanvasCosts); // Создание и отображение диаграммы
-        });
+       
     }
 
     async updateChartsByPeriod(period) {

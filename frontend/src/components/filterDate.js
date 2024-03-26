@@ -65,12 +65,13 @@ export class FilterDate {
                 this.getOperations(periodHandlers[buttonId]);
             });
         }
-        
+
     }
-    
+
 
     // обработка выбора даты начала и конца интервала
     handleIntervalFilter() {
+
         // Получаем элементы для выбора дат "От" и "До" интервала
         const dateFrom = document.getElementById('startDate');
         const dateTo = document.getElementById('endDate');
@@ -82,11 +83,12 @@ export class FilterDate {
 
         // обработчик при клике на даты без выбора фильтра интервал
         const handleFilterIntervalClick = () => {
-
+            // Если выбраны обе даты, использовать выбранный интервал
             if (dateFrom.value !== '' && dateTo.value !== '') { // Проверяем, заполнены ли оба поля даты
                 this.updateButtonClass('FILTER_INTERVAL'); // Обновляем класс кнопки "Интервал" для отображения активного состояния
                 this.getOperationsWithInterval(period, dateFrom.value, dateTo.value); // Вызываем метод для получения операций с учетом выбранного интервала
             } else {
+                
                 console.log('Пожалуйста заполните оба поля дат.');
             }
         };
