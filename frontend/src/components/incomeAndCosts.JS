@@ -11,7 +11,6 @@ export class IncomeAndCosts extends FilterDate {
     constructor() {
         super();
         this.routeParams = UrlManager.getQueryParams();
-
         this.init();
     }
 
@@ -32,7 +31,7 @@ export class IncomeAndCosts extends FilterDate {
         this.createTable();
 
     }
-    
+
 
     async getOperationsWithInterval(period, dateFrom, dateTo) {
         await super.getOperationsWithInterval(period, dateFrom, dateTo);
@@ -139,15 +138,18 @@ export class IncomeAndCosts extends FilterDate {
             const result = await CustomHttp.request(config.host + '/operations/' + operationId, 'DELETE');
             if (result && !result.error) {
 
-                location.href = '#/incomeAndCosts';
-                // this.updateTable();
+
 
                 // Удаление модального окна
-                const modalBackdrop = document.querySelector('.modal-backdrop.show');
+                const modal = document.getElementById('exampleModal')
+                const modalInstance = bootstrap.Modal.getOrCreateInstance(modal);
+                console.log(modalInstance)
 
-                if (modalBackdrop) {
+                if (modalInstance) {
+                    this.updateTable()
                     // Удаляем элемент
-                    modalBackdrop.remove();
+                    modalInstance.hide(); // Скрыть модальное окно
+                    location.href = '#/incomeAndCosts';
                 }
 
             }
@@ -156,6 +158,8 @@ export class IncomeAndCosts extends FilterDate {
         }
     }
 
+
+
     editDeleteLinkHandler(action, operationId) {
         this.populateModal(operationId);
         const deleteOperationButton = document.getElementById('delete-operation');
@@ -163,6 +167,7 @@ export class IncomeAndCosts extends FilterDate {
             deleteOperationButton.onclick = () => {
                 this.deleteOperation(operationId);
             };
+
         } else if (action === 'Edit') {
             const operation = this.operations.find(op => op.id === operationId); // Находим операцию по идентификатору
             const operationData = JSON.stringify(operation); // Преобразуем данные операции в JSON строку
@@ -211,6 +216,21 @@ export class IncomeAndCosts extends FilterDate {
         // Пересоздаем таблицу с использованием обновленного массива
         this.clearTableWithOperations();
         this.createTable();
+    }
+
+    async updateTable() {
+        try {
+            // Получить актуальные данные об операциях 
+            await this.getOperations('all');
+
+            // Очистить предыдущее содержимое таблицы
+            this.clearTableWithOperations();
+
+            // Пересоздать таблицу с использованием обновленных данных
+            this.createTable();
+        } catch (error) {
+            console.error('Ошибка при обновлении таблицы:', error);
+        }
     }
 
     clearTableWithOperations() {
